@@ -5,11 +5,18 @@ or using this repository.
 
 ## What this tool is
 
-`preview-artifact` is a **local** CLI that opens a markdown file in the browser
-with a beautiful read view (mermaid diagrams, syntax highlighting, tables, task
-lists) and a WYSIWYG edit mode that **saves back to the same file** and
-**live-reloads** when the file changes on disk. It's built for viewing the
-markdown artifacts that agents produce: plans, design docs, audit reports.
+`preview-artifact` is a **local** CLI that opens an artifact in the browser with
+a beautiful read view and (for text formats) a WYSIWYG/source edit mode that
+**saves back to the same file** and **live-reloads** when the file changes on
+disk. Built for the artifacts agents produce: plans, design docs, audit reports,
+papers.
+
+Supported file types:
+- **`.md` / `.markdown`** — markdown with mermaid, syntax highlighting, GFM
+  tables/task lists, and KaTeX math; edited via a WYSIWYG editor.
+- **`.tex` / `.latex`** — display equations typeset by KaTeX with the rest as
+  highlighted LaTeX source; edited as plain source.
+- **`.pdf`** — embedded read-only viewer (no edit).
 
 ## How an agent should launch it for the user
 

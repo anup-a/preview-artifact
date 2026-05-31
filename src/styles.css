@@ -21,7 +21,7 @@
   --warning: 38 92% 45%;
   --success: 142 64% 38%;
   --link: 221 87% 53%;          /* #4078f2 */
-  --heading: 5 73% 52%;         /* #e45649 atom one light red */
+  --heading: 301 63% 39%;       /* #a626a4 atom one light purple */
 
   --radius: 0.65rem;
   --toolbar-h: 56px;
@@ -50,7 +50,7 @@
     --ring: 207 82% 66%;          /* #61afef atom blue */
 
     --link: 207 82% 66%;          /* #61afef */
-    --heading: 355 65% 65%;       /* #e06c75 atom one dark coral */
+    --heading: 286 60% 67%;       /* #c678dd atom one dark purple */
 
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
     --shadow:
@@ -314,6 +314,50 @@ body {
 .edit-view {
   max-width: var(--content-max);
   width: 100%;
+}
+
+/* ---- PDF viewer (full-bleed, read-only) ---- */
+.content--pdf {
+  display: block;
+  padding: 0;
+}
+.pdf-view {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: hsl(var(--muted));
+}
+
+/* ---- .tex source editor ---- */
+.source-input {
+  width: 100%;
+  min-height: calc(100vh - var(--toolbar-h) - 80px);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  padding: 18px 20px;
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  font-size: 13.5px;
+  line-height: 1.65;
+  resize: vertical;
+  outline: none;
+  tab-size: 2;
+}
+.source-input:focus-visible {
+  border-color: hsl(var(--ring));
+  outline: none;
+}
+
+/* ---- KaTeX display equations (in .tex read view) ---- */
+.read-view .tex-math {
+  margin: 18px 0;
+  padding: 6px 0;
+  overflow-x: auto;
+}
+.read-view .tex-math .katex-display {
+  margin: 0;
 }
 
 /* ---- Frontmatter panel (shadcn Card) ---- */

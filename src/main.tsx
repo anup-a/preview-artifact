@@ -3,6 +3,7 @@ import { App } from "./App";
 
 import "highlight.js/styles/atom-one-light.css";
 import "github-markdown-css/github-markdown.css";
+import "katex/dist/katex.min.css";
 import "./theme"; // injects dark variants scoped to prefers-color-scheme
 import "./styles.css";
 

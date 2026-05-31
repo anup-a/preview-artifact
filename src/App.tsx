@@ -1,36 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./Editor";
-import { renderMarkdown, runMermaid } from "./readview";
+import { renderMarkdown, renderTex, runMermaid } from "./readview";
 import { splitFrontmatter, joinFrontmatter } from "./frontmatter";
-import { fetchFile, saveFile, watchFile } from "./api";
+import { fetchFile, saveFile, watchFile, type FileKind } from "./api";
 
 type Mode = "read" | "edit";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 export function App() {
   const [path, setPath] = useState<string>("");
+  const [kind, setKind] = useState<FileKind>("markdown");
   const [frontmatter, setFrontmatter] = useState<string | null>(null);
   const [body, setBody] = useState<string>("");
   const [mode, setMode] = useState<Mode>("read");
   const [dirty, setDirty] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [loadError, setLoadError] = useState<string | null>(null);
-  // A newer version arrived on disk while we had unsaved edits.
   const [pendingReload, setPendingReload] = useState<string | null>(null);
-  // editKey forces the Crepe editor to remount when we load fresh content.
   const [editKey, setEditKey] = useState(0);
+  // Cache-buster for the PDF <iframe> so external changes reload it.
+  const [rawVersion, setRawVersion] = useState(0);
 
   const readRef = useRef<HTMLDivElement>(null);
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
+  const kindRef = useRef(kind);
+  kindRef.current = kind;
 
-  const applyContent = useCallback((content: string) => {
-    const split = splitFrontmatter(content);
-    setFrontmatter(split.frontmatter);
-    setBody(split.body);
+  const applyDoc = useCallback((k: FileKind, content: string | undefined) => {
+    setKind(k);
+    if (k === "markdown") {
+      const split = splitFrontmatter(content ?? "");
+      setFrontmatter(split.frontmatter);
+      setBody(split.body);
+    } else {
+      setFrontmatter(null);
+      setBody(content ?? "");
+    }
     setDirty(false);
     setPendingReload(null);
-    setEditKey((k) => k + 1);
+    setEditKey((n) => n + 1);
   }, []);
 
   // Initial load.
@@ -38,33 +47,37 @@ export function App() {
     fetchFile()
       .then((payload) => {
         setPath(payload.path);
-        applyContent(payload.content);
+        setRawVersion(payload.mtimeMs);
+        applyDoc(payload.kind, payload.content);
       })
       .catch((err) => setLoadError(String(err)));
-  }, [applyContent]);
+  }, [applyDoc]);
 
   // Live-reload subscription.
   useEffect(() => {
     return watchFile((msg) => {
-      if (dirtyRef.current) {
-        setPendingReload(msg.content); // ask before discarding edits
+      if (kindRef.current === "pdf") {
+        setRawVersion(msg.mtimeMs); // reload the iframe
+      } else if (dirtyRef.current) {
+        setPendingReload(msg.content ?? ""); // ask before discarding edits
       } else {
-        applyContent(msg.content);
+        applyDoc(kindRef.current, msg.content);
       }
     });
-  }, [applyContent]);
+  }, [applyDoc]);
 
-  // Render read-mode HTML + mermaid whenever the body changes in read mode.
+  // Render read-mode HTML when body/kind/mode change (markdown + tex only).
   useEffect(() => {
-    if (mode !== "read" || !readRef.current) return;
-    readRef.current.innerHTML = renderMarkdown(body);
-    void runMermaid(readRef.current);
-  }, [mode, body]);
+    if (mode !== "read" || kind === "pdf" || !readRef.current) return;
+    readRef.current.innerHTML =
+      kind === "tex" ? renderTex(body) : renderMarkdown(body);
+    if (kind === "markdown") void runMermaid(readRef.current);
+  }, [mode, body, kind]);
 
   const save = useCallback(async () => {
     setSaveState("saving");
     try {
-      const raw = joinFrontmatter(frontmatter, body);
+      const raw = kind === "markdown" ? joinFrontmatter(frontmatter, body) : body;
       await saveFile(raw);
       setDirty(false);
       setSaveState("saved");
@@ -72,7 +85,7 @@ export function App() {
     } catch {
       setSaveState("error");
     }
-  }, [frontmatter, body]);
+  }, [kind, frontmatter, body]);
 
   const onBodyChange = useCallback((markdown: string) => {
     setBody(markdown);
@@ -84,14 +97,14 @@ export function App() {
     setDirty(true);
   }, []);
 
-  // Keyboard: Cmd/Ctrl+S to save, Cmd/Ctrl+E to toggle mode.
+  // Keyboard: Cmd/Ctrl+S save, Cmd/Ctrl+E toggle (not for pdf).
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
       if (mod && e.key.toLowerCase() === "s") {
         e.preventDefault();
         if (dirtyRef.current) void save();
-      } else if (mod && e.key.toLowerCase() === "e") {
+      } else if (mod && e.key.toLowerCase() === "e" && kindRef.current !== "pdf") {
         e.preventDefault();
         setMode((m) => (m === "read" ? "edit" : "read"));
       }
@@ -105,6 +118,7 @@ export function App() {
   }
 
   const fileName = path.split("/").pop() ?? path;
+  const editable = kind !== "pdf";
 
   return (
     <div className="app">
@@ -114,42 +128,61 @@ export function App() {
           <span className="file-path" title={path}>{path}</span>
         </div>
         <div className="toolbar-actions">
-          <StatusPill dirty={dirty} saveState={saveState} />
-          <div className="mode-switch" role="tablist">
-            <button
-              role="tab"
-              aria-selected={mode === "read"}
-              className={mode === "read" ? "active" : ""}
-              onClick={() => setMode("read")}
-            >
-              Read
+          {kind === "pdf" ? (
+            <span className="status clean">PDF · read-only</span>
+          ) : (
+            <StatusPill dirty={dirty} saveState={saveState} />
+          )}
+          {editable && (
+            <div className="mode-switch" role="tablist">
+              <button
+                role="tab"
+                aria-selected={mode === "read"}
+                className={mode === "read" ? "active" : ""}
+                onClick={() => setMode("read")}
+              >
+                Read
+              </button>
+              <button
+                role="tab"
+                aria-selected={mode === "edit"}
+                className={mode === "edit" ? "active" : ""}
+                onClick={() => setMode("edit")}
+              >
+                Edit
+              </button>
+            </div>
+          )}
+          {editable && (
+            <button className="save-btn" disabled={!dirty} onClick={() => void save()}>
+              Save
             </button>
-            <button
-              role="tab"
-              aria-selected={mode === "edit"}
-              className={mode === "edit" ? "active" : ""}
-              onClick={() => setMode("edit")}
-            >
-              Edit
-            </button>
-          </div>
-          <button className="save-btn" disabled={!dirty} onClick={() => void save()}>
-            Save
-          </button>
+          )}
         </div>
       </header>
 
       {pendingReload !== null && (
         <div className="reload-banner">
           This file changed on disk and you have unsaved edits.
-          <button onClick={() => applyContent(pendingReload)}>Reload (discard mine)</button>
+          <button onClick={() => applyDoc(kind, pendingReload)}>Reload (discard mine)</button>
           <button onClick={() => setPendingReload(null)}>Keep my edits</button>
         </div>
       )}
 
-      <main className="content">
-        {mode === "read" ? (
+      <main className={"content" + (kind === "pdf" ? " content--pdf" : "")}>
+        {kind === "pdf" ? (
+          <iframe className="pdf-view" title={fileName} src={`/api/raw?v=${rawVersion}`} />
+        ) : mode === "read" ? (
           <article ref={readRef} className="markdown-body read-view" />
+        ) : kind === "tex" ? (
+          <div className="edit-view">
+            <textarea
+              className="source-input"
+              value={body}
+              spellCheck={false}
+              onChange={(e) => onBodyChange(e.target.value)}
+            />
+          </div>
         ) : (
           <div className="edit-view">
             {frontmatter !== null && (

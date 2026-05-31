@@ -1,8 +1,10 @@
 # preview-artifact
 
-Open the markdown artifacts your coding agents produce (plans, design docs,
-audit reports) in the browser — **read them beautifully, edit them in place,
+Open the artifacts your coding agents produce (plans, design docs, audit
+reports, papers) in the browser — **read them beautifully, edit them in place,
 save back to disk, and live-reload** when an agent rewrites the file.
+
+Handles **Markdown** (`.md`), **LaTeX** (`.tex`), and **PDF** (`.pdf`).
 
 Fully local. No cloud, no telemetry, no account.
 
@@ -19,7 +21,11 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 ## Features
 
 - **Read mode** — rich typography (GitHub markdown CSS), syntax-highlighted
-  code (highlight.js), rendered **mermaid** diagrams, GFM tables and task lists.
+  code (highlight.js), rendered **mermaid** diagrams, GFM tables and task lists,
+  and **KaTeX math** (`$…$` / `$$…$$`).
+- **LaTeX (`.tex`)** — display equations typeset by KaTeX with the rest shown as
+  highlighted LaTeX source; editable and saveable as plain source.
+- **PDF (`.pdf`)** — embedded read-only viewer.
 - **Edit mode** — Milkdown (ProseMirror) WYSIWYG that round-trips markdown
   faithfully. YAML frontmatter is split into its own panel so the editor can
   never corrupt it.

@@ -1,9 +1,13 @@
 // Thin client for the local Fastify server. All requests are same-origin
 // (the server serves this SPA), so no base URL or auth is needed.
 
+export type FileKind = "markdown" | "tex" | "pdf";
+
 export interface FilePayload {
   path: string;
-  content: string;
+  kind: FileKind;
+  /** Absent for binary kinds (pdf) — fetch those via /api/raw. */
+  content?: string;
   mtimeMs: number;
 }
 
@@ -23,7 +27,7 @@ export async function saveFile(content: string): Promise<{ mtimeMs: number }> {
   return res.json();
 }
 
-export type ReloadMessage = { type: "reload"; content: string; mtimeMs: number };
+export type ReloadMessage = { type: "reload"; content?: string; mtimeMs: number };
 
 /** Subscribe to external file changes. Returns an unsubscribe function. */
 export function watchFile(onReload: (msg: ReloadMessage) => void): () => void {
