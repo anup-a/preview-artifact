@@ -3,14 +3,14 @@
   "owner": { "name": "anup-a", "url": "https://github.com/anup-a" },
   "metadata": {
     "description": "Local browser viewer for agent artifacts (markdown / LaTeX / PDF).",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
       "name": "preview-artifact",
       "source": ".",
       "description": "Ships the preview-artifact skill: open .md/.tex/.pdf/image artifacts in the local browser viewer (read + edit + live-reload).",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }

@@ -94,32 +94,33 @@ Use it from any project — it's not tied to any particular repo.
 
 This tool is meant to be launched *by* your agent when it finishes writing an
 artifact. The CLI self-daemonizes and returns immediately, so agents just run it
-— no backgrounding needed. The preferred integration is the **skill**, which the
-model auto-invokes when you ask to preview something or after it writes a plan
-(no slash command to remember). See [`AGENTS.md`](./AGENTS.md) for details.
+— no backgrounding needed. It ships as a **skill** that the model auto-invokes
+when you ask to preview something or after it writes a plan (no slash command to
+remember). See [`AGENTS.md`](./AGENTS.md) for details.
 
 > **CLI vs skill.** The `preview-artifact` **npm package is the actual program**
 > (it runs the viewer). The **skill** is just instructions telling the agent when
-> to run it — so installing the skill alone is enough: on first use it runs
+> to run it — installing the skill alone is enough: on first use it runs
 > `npm install -g preview-artifact` for you if the CLI is missing. Prefer the CLI
 > directly? Just `npm install -g preview-artifact` and skip the skill.
 
-### Skill (any agent — recommended)
+### Claude Code (plugin — recommended)
 
-Install the [`preview-artifact` skill](./skills/preview-artifact/SKILL.md) into
-your agent (Claude Code, Cursor, …) via the open [skills](https://skills.sh) CLI:
-
-```bash
-npx skills add anup-a/preview-artifact
-```
-
-### Claude Code (plugin)
-
-Or install it as a plugin from this repo's marketplace (ships the same skill):
+Install the plugin from this repo's marketplace; it ships the skill, which then
+auto-invokes:
 
 ```
 /plugin marketplace add anup-a/preview-artifact
 /plugin install preview-artifact@preview-artifact
+```
+
+### Other agents (skill)
+
+Install the same [skill](./skills/preview-artifact/SKILL.md) into any agent
+(Cursor, Aider, …) via the open [skills](https://skills.sh) CLI:
+
+```bash
+npx skills add anup-a/preview-artifact
 ```
 
 ### Codex (custom prompt)
