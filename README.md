@@ -56,15 +56,27 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 
 ## Install
 
-Requires Node ≥ 18.
+Requires Node ≥ 18. One command — installs the `preview-artifact` binary
+globally (builds itself on install):
+
+```bash
+# once published to npm:
+npm install -g preview-artifact
+
+# or straight from GitHub today:
+npm install -g github:anup-a/preview-artifact
+```
+
+<details>
+<summary>From a local clone (for development)</summary>
 
 ```bash
 git clone https://github.com/anup-a/preview-artifact.git
 cd preview-artifact
-npm install
-npm run build      # produces dist/ that the CLI serves
+npm install        # runs the build automatically (prepare script)
 npm link           # makes `preview-artifact` available globally
 ```
+</details>
 
 ## Usage
 

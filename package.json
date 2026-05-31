@@ -1,8 +1,12 @@
 {
   "name": "preview-artifact",
   "version": "0.1.0",
-  "description": "Open AI-agent markdown artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
+  "description": "Open AI-agent markdown / LaTeX / PDF artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
+  "homepage": "https://github.com/anup-a/preview-artifact",
+  "repository": { "type": "git", "url": "git+https://github.com/anup-a/preview-artifact.git" },
+  "bugs": { "url": "https://github.com/anup-a/preview-artifact/issues" },
+  "keywords": ["markdown", "latex", "pdf", "viewer", "preview", "artifacts", "mermaid", "cli"],
   "bin": {
     "preview-artifact": "bin/preview-artifact.js"
   },
@@ -17,7 +21,8 @@
     "preview": "vite preview",
     "start": "node server/index.mjs",
     "typecheck": "tsc --noEmit",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "prepare": "vite build"
   },
   "engines": {
     "node": ">=18"
@@ -51,7 +56,6 @@
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "playwright": "^1.60.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.14"
   }
