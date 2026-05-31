@@ -18,9 +18,8 @@ Steps:
    ```
    preview-artifact open "$ARGUMENTS"
    ```
-   If `preview-artifact` isn't on PATH, the project hasn't been linked — tell the
-   user to run `npm install && npm run build && npm link` in the preview-artifact
-   repo (see its README), then retry.
+   If `preview-artifact` isn't on PATH, it isn't installed — tell the user to
+   run `npm install -g preview-artifact`, then retry.
 4. Report the printed URL (`[preview-artifact] file → http://127.0.0.1:PORT/?path=…`).
    The browser opens automatically; if not, the user can click it. Mention that
    text files (`.md`/`.tex`) edit and save back to disk and live-reload on change;

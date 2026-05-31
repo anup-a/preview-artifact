@@ -45,13 +45,14 @@ Prints, e.g.:
   `.claude/commands/`), or just call the CLI via Bash (it returns immediately).
 - **Codex / shell-based agents** — run `preview-artifact open <file>` directly;
   it daemonizes itself, so no `nohup &` is required.
-- **Any agent** — if `preview-artifact` isn't on PATH, the repo hasn't been
-  linked; run `npm install && npm run build && npm link` here first.
+- **Any agent** — if `preview-artifact` isn't on PATH, install it:
+  `npm install -g preview-artifact`.
 
 ## Prerequisites
 
 - Node ≥ 18.
-- One-time setup in this repo: `npm install && npm run build && npm link`.
+- Install once: `npm install -g preview-artifact` (or `npm link` from a clone
+  when developing this repo).
 
 ## Working ON this repo (not just using it)
 

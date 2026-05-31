@@ -57,25 +57,22 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 
 ## Install
 
-Requires Node ≥ 18. One command — installs the `preview-artifact` binary
-globally (builds itself on install):
+Requires Node ≥ 18.
 
 ```bash
-# once published to npm:
 npm install -g preview-artifact
-
-# or straight from GitHub today:
-npm install -g github:anup-a/preview-artifact
 ```
 
 <details>
-<summary>From a local clone (for development)</summary>
+<summary>Other ways to install</summary>
 
 ```bash
+# latest from GitHub
+npm install -g github:anup-a/preview-artifact
+
+# local clone (for development) — npm install runs the build automatically
 git clone https://github.com/anup-a/preview-artifact.git
-cd preview-artifact
-npm install        # runs the build automatically (prepare script)
-npm link           # makes `preview-artifact` available globally
+cd preview-artifact && npm install && npm link
 ```
 </details>
 
@@ -130,7 +127,7 @@ preview-artifact open path/to/file.md   # prints the URL, then returns
 
 ### If `preview-artifact` isn't on your agent's PATH
 
-`npm link` installs the binary into npm's global bin. If your agent runs with a
+`npm install -g` puts the binary in npm's global bin. If your agent runs with a
 minimal PATH and can't find it, add npm's global bin to PATH:
 
 ```bash

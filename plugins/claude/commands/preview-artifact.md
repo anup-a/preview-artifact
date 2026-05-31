@@ -19,8 +19,7 @@ Steps:
    preview-artifact open "$ARGUMENTS"
    ```
    If `preview-artifact` isn't on PATH, it isn't installed — tell the user to
-   `git clone https://github.com/anup-a/preview-artifact && cd preview-artifact
-   && npm install && npm run build && npm link`, then retry.
+   run `npm install -g preview-artifact`, then retry.
 4. Report the printed URL (`[preview-artifact] file → http://127.0.0.1:PORT/?path=…`).
    The browser opens automatically; if not, the user can click it. Mention that
    text files (`.md`/`.tex`) edit and save back to disk and live-reload on change;

@@ -5,8 +5,7 @@ commands) and **`AGENTS.md`**. This gives Codex a `/preview-artifact` command.
 
 ## Install
 
-1. Make sure the CLI is available (see the main README — `npm install &&
-   npm run build && npm link`).
+1. Make sure the CLI is installed: `npm install -g preview-artifact`.
 2. Copy the prompt into your Codex prompts directory:
 
    ```bash
