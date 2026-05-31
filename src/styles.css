@@ -22,8 +22,9 @@
   --link: 18 60% 44%;           /* terracotta */
   --heading: 35 16% 11%;        /* headings are near-black serif */
 
-  --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
-    "Times New Roman", serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-serif: "Source Serif 4", Georgia, "Iowan Old Style", "Palatino Linotype",
+    serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
 
@@ -47,7 +48,14 @@ body,
 }
 
 body {
-  background: hsl(var(--background));
+  /* warm paper: lighter toward the top-center, warmer tan at the edges */
+  background-color: hsl(37 28% 88%);
+  background-image: radial-gradient(
+    115% 80% at 50% -8%,
+    hsl(42 46% 97%) 0%,
+    hsl(37 28% 88%) 100%
+  );
+  background-attachment: fixed;
   color: hsl(var(--foreground));
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -229,11 +237,21 @@ body {
 }
 
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   color: hsl(var(--heading));
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+.read-view.markdown-body h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5em;
+}
+.read-view.markdown-body h2 {
+  font-size: 1.7rem;
+}
+.read-view.markdown-body h3 {
+  font-size: 1.3rem;
 }
 /* The signature trailing em-dash on section titles. */
 .read-view.markdown-body :is(h1, h2, h3)::after {
@@ -245,9 +263,13 @@ body {
   color: inherit;
   text-decoration: none;
 }
-.read-view.markdown-body :is(h1, h2) {
+.read-view.markdown-body h1 {
   border-bottom: 1px solid hsl(var(--border));
   padding-bottom: 0.3em;
+}
+.read-view.markdown-body h2 {
+  border-bottom: 0;
+  margin-top: 1.6em;
 }
 
 .read-view.markdown-body a {
