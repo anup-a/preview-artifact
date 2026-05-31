@@ -74,7 +74,6 @@ const RECENTS_FILE = path.join(STATE_DIR, "recents.json");
 const RECENTS_MAX = 40;
 let opened = []; // abs paths, most-recent first
 let recents = []; // [{ path, ts }], most-recent first
-const panelSockets = new Set();
 
 function loadRecents() {
   try {
@@ -106,21 +105,7 @@ function registerArtifacts(paths, ts) {
     opened = [p, ...opened.filter((x) => x !== p)];
     recents = [{ path: p, ts }, ...recents.filter((r) => r.path !== p)].slice(0, RECENTS_MAX);
   }
-  if (changed) {
-    void saveRecents();
-    broadcastPanel();
-  }
-}
-
-function broadcastPanel() {
-  const frame = JSON.stringify({ type: "artifacts" });
-  for (const socket of panelSockets) {
-    try {
-      socket.send(frame);
-    } catch {
-      /* drop */
-    }
-  }
+  if (changed) void saveRecents();
 }
 
 // Per-path state: a lazily-created file watcher and its subscribed sockets.
@@ -238,13 +223,6 @@ fastify.put("/api/file", async (request, reply) => {
   await writeFile(p, content, "utf8");
   const info = await stat(p);
   return { mtimeMs: info.mtimeMs };
-});
-
-// Panel updates: notified whenever the open/recent artifact lists change.
-fastify.get("/ws/panel", { websocket: true }, (connection) => {
-  const socket = connection.socket ?? connection;
-  panelSockets.add(socket);
-  socket.on("close", () => panelSockets.delete(socket));
 });
 
 fastify.get("/ws", { websocket: true }, (connection, request) => {

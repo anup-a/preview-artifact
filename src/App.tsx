@@ -11,7 +11,7 @@ import {
   fileDir,
   type FileKind,
 } from "./api";
-import { fetchArtifacts, watchPanel, type Artifacts } from "./api";
+import { fetchArtifacts, type Artifacts } from "./api";
 import { getTheme, applyTheme, type Theme } from "./theme";
 import { Sidebar } from "./Sidebar";
 
@@ -45,7 +45,7 @@ export function App() {
   const [theme, setTheme] = useState<Theme>(getTheme);
   const [artifacts, setArtifacts] = useState<Artifacts>({ opened: [], recents: [] });
   const [sidebarOpen, setSidebarOpen] = useState(
-    () => localStorage.getItem("pa-sidebar") !== "0",
+    () => localStorage.getItem("pa-sidebar") === "1", // closed by default
   );
 
   const setSidebar = useCallback((open: boolean) => {
@@ -106,11 +106,10 @@ export function App() {
     });
   }, [applyDoc]);
 
-  // Load the artifacts panel and keep it live as files are opened.
+  // Load the artifacts panel once. The order only changes on refresh/navigation
+  // (clicking an item reloads), not reactively — keeps the list stable to read.
   useEffect(() => {
-    const load = () => fetchArtifacts().then(setArtifacts).catch(() => {});
-    load();
-    return watchPanel(load);
+    fetchArtifacts().then(setArtifacts).catch(() => {});
   }, []);
 
   // Render read-mode HTML when body/kind/mode change (markdown + tex only).

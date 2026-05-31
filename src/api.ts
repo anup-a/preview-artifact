@@ -64,20 +64,6 @@ export async function fetchArtifacts(): Promise<Artifacts> {
   return res.json();
 }
 
-/** Subscribe to changes in the open/recent artifact lists. */
-export function watchPanel(onChange: () => void): () => void {
-  const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${location.host}/ws/panel`);
-  ws.addEventListener("message", (event) => {
-    try {
-      if (JSON.parse(event.data)?.type === "artifacts") onChange();
-    } catch {
-      /* ignore */
-    }
-  });
-  return () => ws.close();
-}
-
 /** URL to view a given artifact (for sidebar links). */
 export function viewUrl(absPath: string): string {
   return `/?path=${encodeURIComponent(absPath)}`;
