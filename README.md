@@ -18,6 +18,10 @@ preview-artifact open docs/plans/2026-05-31-some-design.md
 
 ## Screenshots
 
+In the wild — an agent finishes a design doc and opens it in Pretifact:
+
+![Agent opens an artifact in Pretifact](docs/screenshots/agent-open.png)
+
 Editorial read view — serif display type, warm paper, orange frame:
 
 ![Read view](docs/screenshots/read-markdown.png)
