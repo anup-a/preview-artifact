@@ -53,6 +53,9 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 - **Edit mode** — Milkdown (ProseMirror) WYSIWYG that round-trips markdown
   faithfully. YAML frontmatter is split into its own panel so the editor can
   never corrupt it.
+- **Side panel** — open several artifacts at once (`preview-artifact open a.md b.tex c.pdf`),
+  switch between them, and pick from recently-opened history. Updates live as the
+  agent opens more. Collapsible.
 - **Save** — writes back to the same file. `Cmd/Ctrl+S`.
 - **Live-reload** — a file watcher pushes external changes over a websocket; if
   you have unsaved edits it asks before discarding them.
@@ -83,8 +86,10 @@ cd preview-artifact && npm install && npm link
 
 ```bash
 preview-artifact open path/to/file.md   # open in the browser
+preview-artifact open a.md b.tex c.pdf  # open several into the side panel
 preview-artifact path/to/file.md        # shorthand
 preview-artifact open file.md --no-open # start server without launching a browser
+preview-artifact stop                   # stop the daemon
 preview-artifact --help
 ```
 

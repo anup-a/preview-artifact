@@ -9,7 +9,7 @@
 // web pages cannot read API responses (opaque) or perform preflighted writes.
 
 import { readFile, writeFile, stat, mkdir, rm } from "node:fs/promises";
-import { existsSync, statSync } from "node:fs";
+import { existsSync, statSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
@@ -67,6 +67,62 @@ function isValidFile(p) {
   }
 }
 
+// ---- Artifacts panel state ----
+// `opened`: paths registered this daemon run (the session working set).
+// `recents`: persisted history across restarts.
+const RECENTS_FILE = path.join(STATE_DIR, "recents.json");
+const RECENTS_MAX = 40;
+let opened = []; // abs paths, most-recent first
+let recents = []; // [{ path, ts }], most-recent first
+const panelSockets = new Set();
+
+function loadRecents() {
+  try {
+    const data = JSON.parse(readFileSync(RECENTS_FILE, "utf8"));
+    if (Array.isArray(data)) recents = data.filter((r) => r && typeof r.path === "string");
+  } catch {
+    /* none yet */
+  }
+}
+
+async function saveRecents() {
+  try {
+    await mkdir(STATE_DIR, { recursive: true });
+    await writeFile(RECENTS_FILE, JSON.stringify(recents.slice(0, RECENTS_MAX)));
+  } catch (err) {
+    console.error("[preview-artifact] recents save error:", err);
+  }
+}
+
+function artifactInfo(p) {
+  return { path: p, name: path.basename(p), kind: kindOf(p) };
+}
+
+function registerArtifacts(paths, ts) {
+  let changed = false;
+  for (const p of paths) {
+    if (!isValidFile(p)) continue;
+    changed = true;
+    opened = [p, ...opened.filter((x) => x !== p)];
+    recents = [{ path: p, ts }, ...recents.filter((r) => r.path !== p)].slice(0, RECENTS_MAX);
+  }
+  if (changed) {
+    void saveRecents();
+    broadcastPanel();
+  }
+}
+
+function broadcastPanel() {
+  const frame = JSON.stringify({ type: "artifacts" });
+  for (const socket of panelSockets) {
+    try {
+      socket.send(frame);
+    } catch {
+      /* drop */
+    }
+  }
+}
+
 // Per-path state: a lazily-created file watcher and its subscribed sockets.
 const entries = new Map(); // absPath -> { watcher, sockets:Set, lastWritten:string|null }
 
@@ -116,12 +172,31 @@ await fastify.register(fastifyStatic, { root: distDir });
 // Health check with an app signature so the CLI can tell it's really us.
 fastify.get("/api/health", async () => ({ app: "preview-artifact", ok: true }));
 
+// The sidebar's two sections: this session's open artifacts + recent history.
+fastify.get("/api/artifacts", async () => {
+  const openInfos = opened.filter(isValidFile).map(artifactInfo);
+  const openSet = new Set(opened);
+  const recentInfos = recents
+    .map((r) => r.path)
+    .filter((p) => !openSet.has(p) && isValidFile(p))
+    .map(artifactInfo);
+  return { opened: openInfos, recents: recentInfos };
+});
+
+// CLI registers artifacts here so they appear in the panel.
+fastify.post("/api/register", async (request) => {
+  const paths = Array.isArray(request.body?.paths) ? request.body.paths : [];
+  registerArtifacts(paths, Date.now());
+  return { ok: true };
+});
+
 fastify.get("/api/file", async (request, reply) => {
   const p = String(request.query?.path ?? "");
   if (!isValidFile(p)) {
     reply.code(400);
     return { error: "invalid or missing path" };
   }
+  registerArtifacts([p], Date.now()); // viewing a file also tracks it
   const info = await stat(p);
   const kind = kindOf(p);
   if (!isTextKind(kind)) {
@@ -163,6 +238,13 @@ fastify.put("/api/file", async (request, reply) => {
   await writeFile(p, content, "utf8");
   const info = await stat(p);
   return { mtimeMs: info.mtimeMs };
+});
+
+// Panel updates: notified whenever the open/recent artifact lists change.
+fastify.get("/ws/panel", { websocket: true }, (connection) => {
+  const socket = connection.socket ?? connection;
+  panelSockets.add(socket);
+  socket.on("close", () => panelSockets.delete(socket));
 });
 
 fastify.get("/ws", { websocket: true }, (connection, request) => {
@@ -207,6 +289,7 @@ async function listenOnFreePort(start, attempts = 20) {
   throw new Error(`No free port in range ${start}-${start + attempts}`);
 }
 
+loadRecents();
 const port = await listenOnFreePort(Number(process.env.ARTIFACT_PORT) || 4317);
 await mkdir(STATE_DIR, { recursive: true });
 await writeFile(STATE_FILE, JSON.stringify({ port, pid: process.pid }));

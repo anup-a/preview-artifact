@@ -112,7 +112,7 @@ body {
 
 .app {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
   border-radius: 6px;
   overflow: hidden;
@@ -123,6 +123,113 @@ body {
     hsl(45 40% 98.5%) 0%,
     hsl(42 22% 95%) 100%
   );
+}
+
+/* ---- Layout: sidebar + main ---- */
+.main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar {
+  flex: 0 0 256px;
+  width: 256px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: hsl(var(--muted) / 0.4);
+  border-right: 1px solid hsl(var(--border));
+}
+.sidebar-head {
+  flex: 0 0 auto;
+  height: var(--toolbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 16px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.sidebar-title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+.sidebar-scroll {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 10px 8px 24px;
+}
+.sidebar-section { margin-bottom: 14px; }
+.sidebar-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  padding: 6px 8px;
+}
+.sidebar-empty {
+  font-size: 12.5px;
+  color: hsl(var(--muted-foreground));
+  padding: 2px 8px;
+  margin: 0;
+}
+.artifact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 7px;
+  text-decoration: none;
+  color: hsl(var(--foreground));
+  transition: background 0.12s;
+}
+.artifact-item:hover { background: hsl(var(--accent) / 0.1); }
+.artifact-item.active { background: hsl(var(--accent) / 0.15); }
+.artifact-kind {
+  flex: 0 0 auto;
+  min-width: 30px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: hsl(var(--accent));
+  border: 1px solid hsl(var(--accent) / 0.35);
+  border-radius: 4px;
+  padding: 3px 4px;
+}
+.artifact-text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.artifact-name {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.artifact-dir {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Empty state (no artifact open) ---- */
+.empty-state {
+  margin: auto;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 15px;
+}
+.empty-state p { margin: 4px 0; }
+.empty-state .empty-hint { font-size: 13px; }
+.empty-state code {
+  background: hsl(var(--muted));
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12.5px;
 }
 
 /* ---- Toolbar ---- */

@@ -47,6 +47,42 @@ export async function saveFile(content: string): Promise<{ mtimeMs: number }> {
   return res.json();
 }
 
+export interface ArtifactInfo {
+  path: string;
+  name: string;
+  kind: FileKind;
+}
+
+export interface Artifacts {
+  opened: ArtifactInfo[];
+  recents: ArtifactInfo[];
+}
+
+export async function fetchArtifacts(): Promise<Artifacts> {
+  const res = await fetch("/api/artifacts");
+  if (!res.ok) throw new Error(`Failed to load artifacts: ${res.status}`);
+  return res.json();
+}
+
+/** Subscribe to changes in the open/recent artifact lists. */
+export function watchPanel(onChange: () => void): () => void {
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  const ws = new WebSocket(`${proto}://${location.host}/ws/panel`);
+  ws.addEventListener("message", (event) => {
+    try {
+      if (JSON.parse(event.data)?.type === "artifacts") onChange();
+    } catch {
+      /* ignore */
+    }
+  });
+  return () => ws.close();
+}
+
+/** URL to view a given artifact (for sidebar links). */
+export function viewUrl(absPath: string): string {
+  return `/?path=${encodeURIComponent(absPath)}`;
+}
+
 export type ReloadMessage = { type: "reload"; content?: string; mtimeMs: number };
 
 /** Subscribe to external file changes. Returns an unsubscribe function. */

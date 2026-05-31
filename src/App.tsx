@@ -11,7 +11,9 @@ import {
   fileDir,
   type FileKind,
 } from "./api";
+import { fetchArtifacts, watchPanel, type Artifacts } from "./api";
 import { getTheme, applyTheme, type Theme } from "./theme";
+import { Sidebar } from "./Sidebar";
 
 // Rewrite local/relative <img> sources so they load through the daemon
 // (remote http(s)/data/blob URLs are left untouched).
@@ -41,6 +43,15 @@ export function App() {
   // Cache-buster for the PDF <iframe> so external changes reload it.
   const [rawVersion, setRawVersion] = useState(0);
   const [theme, setTheme] = useState<Theme>(getTheme);
+  const [artifacts, setArtifacts] = useState<Artifacts>({ opened: [], recents: [] });
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => localStorage.getItem("pa-sidebar") !== "0",
+  );
+
+  const setSidebar = useCallback((open: boolean) => {
+    setSidebarOpen(open);
+    localStorage.setItem("pa-sidebar", open ? "1" : "0");
+  }, []);
 
   const toggleTheme = useCallback(() => {
     setTheme((cur) => {
@@ -95,6 +106,13 @@ export function App() {
     });
   }, [applyDoc]);
 
+  // Load the artifacts panel and keep it live as files are opened.
+  useEffect(() => {
+    const load = () => fetchArtifacts().then(setArtifacts).catch(() => {});
+    load();
+    return watchPanel(load);
+  }, []);
+
   // Render read-mode HTML when body/kind/mode change (markdown + tex only).
   useEffect(() => {
     if (mode !== "read" || kind === "pdf" || kind === "image" || !readRef.current) return;
@@ -147,116 +165,119 @@ export function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [save]);
 
-  if (loadError) {
-    return <div className="error-screen">Could not load file:<br />{loadError}</div>;
-  }
-
-  const fileName = path.split("/").pop() ?? path;
-  const editable = kind === "markdown" || kind === "tex";
+  const fileName = path ? (path.split("/").pop() ?? path) : "preview-artifact";
+  const editable = !loadError && (kind === "markdown" || kind === "tex");
   const binary = kind === "pdf" || kind === "image";
 
   return (
     <div className="app">
-      <header className="toolbar">
-        <div className="file-info">
-          <span className="file-name">{fileName}</span>
-          <span className="file-path" title={path}>{path}</span>
-        </div>
-        <div className="toolbar-actions">
-          {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
-          {binary ? (
-            <span className="status clean">
-              {kind === "pdf" ? "PDF" : "Image"} · read-only
-            </span>
-          ) : (
-            <StatusPill dirty={dirty} saveState={saveState} />
-          )}
-          <button
-            className="icon-btn"
-            onClick={toggleTheme}
-            title={theme === "light" ? "Switch to dark" : "Switch to light"}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            ) : (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-              </svg>
-            )}
-          </button>
-          {editable && (
-            <div className="mode-switch" role="tablist">
-              <button
-                role="tab"
-                aria-selected={mode === "read"}
-                className={mode === "read" ? "active" : ""}
-                onClick={() => setMode("read")}
-              >
-                Read
-              </button>
-              <button
-                role="tab"
-                aria-selected={mode === "edit"}
-                className={mode === "edit" ? "active" : ""}
-                onClick={() => setMode("edit")}
-              >
-                Edit
-              </button>
-            </div>
-          )}
-          {editable && (
-            <button className="save-btn" disabled={!dirty} onClick={() => void save()}>
-              Save
-            </button>
-          )}
-        </div>
-      </header>
-
-      {pendingReload !== null && (
-        <div className="reload-banner">
-          This file changed on disk and you have unsaved edits.
-          <button onClick={() => applyDoc(kind, pendingReload)}>Reload (discard mine)</button>
-          <button onClick={() => setPendingReload(null)}>Keep my edits</button>
-        </div>
+      {sidebarOpen && (
+        <Sidebar artifacts={artifacts} currentPath={path} onClose={() => setSidebar(false)} />
       )}
-
-      <main className={"content" + (kind === "pdf" ? " content--pdf" : "")}>
-        {kind === "pdf" ? (
-          <iframe className="pdf-view" title={fileName} src={rawUrl(rawVersion)} />
-        ) : kind === "image" ? (
-          <img className="image-view" alt={fileName} src={rawUrl(rawVersion)} />
-        ) : mode === "read" ? (
-          <article ref={readRef} className="markdown-body read-view" />
-        ) : kind === "tex" ? (
-          <div className="edit-view">
-            <textarea
-              className="source-input"
-              value={body}
-              spellCheck={false}
-              onChange={(e) => onBodyChange(e.target.value)}
-            />
-          </div>
-        ) : (
-          <div className="edit-view">
-            {frontmatter !== null && (
-              <details className="frontmatter-panel" open>
-                <summary>frontmatter (yaml)</summary>
-                <textarea
-                  className="frontmatter-input"
-                  value={frontmatter}
-                  spellCheck={false}
-                  onChange={(e) => onFrontmatterChange(e.target.value)}
-                />
-              </details>
+      <div className="main">
+        <header className="toolbar">
+          <div className="file-info">
+            {!sidebarOpen && (
+              <button className="icon-btn" onClick={() => setSidebar(true)} title="Show panel" aria-label="Show panel">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+              </button>
             )}
-            <Editor key={editKey} defaultValue={body} onChange={onBodyChange} />
+            <span className="file-name">{fileName}</span>
+            {path && <span className="file-path" title={path}>{path}</span>}
+          </div>
+          <div className="toolbar-actions">
+            {!loadError && mode === "edit" && editable && <span className="edit-pill">Editing</span>}
+            {loadError ? null : binary ? (
+              <span className="status clean">
+                {kind === "pdf" ? "PDF" : "Image"} · read-only
+              </span>
+            ) : (
+              <StatusPill dirty={dirty} saveState={saveState} />
+            )}
+            <button
+              className="icon-btn"
+              onClick={toggleTheme}
+              title={theme === "light" ? "Switch to dark" : "Switch to light"}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+              )}
+            </button>
+            {editable && (
+              <div className="mode-switch" role="tablist">
+                <button role="tab" aria-selected={mode === "read"} className={mode === "read" ? "active" : ""} onClick={() => setMode("read")}>
+                  Read
+                </button>
+                <button role="tab" aria-selected={mode === "edit"} className={mode === "edit" ? "active" : ""} onClick={() => setMode("edit")}>
+                  Edit
+                </button>
+              </div>
+            )}
+            {editable && (
+              <button className="save-btn" disabled={!dirty} onClick={() => void save()}>
+                Save
+              </button>
+            )}
+          </div>
+        </header>
+
+        {pendingReload !== null && (
+          <div className="reload-banner">
+            This file changed on disk and you have unsaved edits.
+            <button onClick={() => applyDoc(kind, pendingReload)}>Reload (discard mine)</button>
+            <button onClick={() => setPendingReload(null)}>Keep my edits</button>
           </div>
         )}
-      </main>
+
+        <main className={"content" + (!loadError && kind === "pdf" ? " content--pdf" : "")}>
+          {loadError ? (
+            <div className="empty-state">
+              <p>No artifact open.</p>
+              <p className="empty-hint">Pick one from the panel, or run <code>preview-artifact open &lt;file&gt;</code>.</p>
+            </div>
+          ) : kind === "pdf" ? (
+            <iframe className="pdf-view" title={fileName} src={rawUrl(rawVersion)} />
+          ) : kind === "image" ? (
+            <img className="image-view" alt={fileName} src={rawUrl(rawVersion)} />
+          ) : mode === "read" ? (
+            <article ref={readRef} className="markdown-body read-view" />
+          ) : kind === "tex" ? (
+            <div className="edit-view">
+              <textarea
+                className="source-input"
+                value={body}
+                spellCheck={false}
+                onChange={(e) => onBodyChange(e.target.value)}
+              />
+            </div>
+          ) : (
+            <div className="edit-view">
+              {frontmatter !== null && (
+                <details className="frontmatter-panel" open>
+                  <summary>frontmatter (yaml)</summary>
+                  <textarea
+                    className="frontmatter-input"
+                    value={frontmatter}
+                    spellCheck={false}
+                    onChange={(e) => onFrontmatterChange(e.target.value)}
+                  />
+                </details>
+              )}
+              <Editor key={editKey} defaultValue={body} onChange={onBodyChange} />
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

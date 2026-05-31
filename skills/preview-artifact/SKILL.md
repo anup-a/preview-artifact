@@ -30,6 +30,11 @@ content into the chat.
    ```bash
    preview-artifact open "<path>"
    ```
+   You can pass **several files at once** to load them into the viewer's side
+   panel (the user can switch between them):
+   ```bash
+   preview-artifact open plan.md design.md report.pdf
+   ```
 3. If `preview-artifact` is not found, install it once, then retry:
    ```bash
    npm install -g preview-artifact

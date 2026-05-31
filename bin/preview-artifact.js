@@ -23,7 +23,7 @@ function usage(code = 0) {
   console.log(`preview-artifact — read & edit agent artifacts in the browser
 
 Usage:
-  preview-artifact open <file>   Open a .md / .tex / .pdf file in the browser
+  preview-artifact open <file...> Open .md / .tex / .pdf file in the browser
   preview-artifact <file>        Shorthand for "open"
   preview-artifact stop          Stop the background daemon
 
@@ -91,16 +91,33 @@ async function stopDaemon() {
   }
 }
 
-async function openFile(file, noOpen) {
-  const target = path.resolve(process.cwd(), file);
-  if (!existsSync(target)) {
-    console.error(`error: file not found: ${target}`);
-    process.exit(1);
+async function openFiles(files, noOpen) {
+  const targets = [];
+  for (const f of files) {
+    const abs = path.resolve(process.cwd(), f);
+    if (!existsSync(abs)) {
+      console.error(`error: file not found: ${abs}`);
+      process.exit(1);
+    }
+    targets.push(abs);
   }
   const port = (await healthyPort()) ?? (await startDaemon());
-  const url = `http://127.0.0.1:${port}/?path=${encodeURIComponent(target)}`;
-  console.log(`[preview-artifact] ${path.basename(target)} → ${url}`);
+
+  // Register all artifacts so they appear in the panel.
+  await fetch(`http://127.0.0.1:${port}/api/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ paths: targets }),
+  }).catch(() => {});
+
+  for (const t of targets) {
+    console.log(
+      `[preview-artifact] ${path.basename(t)} → http://127.0.0.1:${port}/?path=${encodeURIComponent(t)}`,
+    );
+  }
+  // Open a browser tab at the first artifact (the rest show in the panel).
   if (!noOpen) {
+    const url = `http://127.0.0.1:${port}/?path=${encodeURIComponent(targets[0])}`;
     await open(url).catch(() => console.log(`open your browser at ${url}`));
   }
 }
@@ -116,10 +133,10 @@ const positional = argv.filter((a) => !a.startsWith("-"));
 if (positional[0] === "stop") {
   await stopDaemon();
 } else {
-  const file = positional[0] === "open" ? positional[1] : positional[0];
-  if (!file) {
+  const files = positional[0] === "open" ? positional.slice(1) : positional;
+  if (files.length === 0) {
     console.error("error: no file specified\n");
     usage(1);
   }
-  await openFile(file, noOpen);
+  await openFiles(files, noOpen);
 }
