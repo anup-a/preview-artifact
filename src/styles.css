@@ -455,6 +455,12 @@ body {
   font-style: italic;
 }
 
+/* Hide Crepe's floating block handle (+ / drag grip) — it sits in the gutter
+   and clutters the editorial layout. Typing "/" still opens the block menu. */
+milkdown-block-handle {
+  display: none !important;
+}
+
 /* ---- Error screen ---- */
 .error-screen {
   display: flex;
