@@ -2,7 +2,7 @@
 // `?path=` query parameter and forwarded to every endpoint, so one daemon can
 // serve any number of files.
 
-export type FileKind = "markdown" | "tex" | "pdf";
+export type FileKind = "markdown" | "tex" | "pdf" | "image";
 
 export interface FilePayload {
   path: string;

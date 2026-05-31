@@ -27,12 +27,19 @@ if (!existsSync(distDir)) {
 const STATE_DIR = path.join(os.homedir(), ".preview-artifact");
 const STATE_FILE = path.join(STATE_DIR, "daemon.json");
 
+const IMAGE_EXT = new Set([
+  ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".svg", ".bmp", ".ico",
+]);
 function kindOf(file) {
   const ext = path.extname(file).toLowerCase();
   if (ext === ".pdf") return "pdf";
+  if (IMAGE_EXT.has(ext)) return "image";
   if (ext === ".tex" || ext === ".latex") return "tex";
   return "markdown";
 }
+
+// Editable text kinds (everything else — pdf, image — is binary/read-only).
+const isTextKind = (kind) => kind === "markdown" || kind === "tex";
 
 // Content-type for raw assets (PDFs and images embedded by markdown).
 const MIME = {
@@ -75,7 +82,7 @@ function getEntry(absPath) {
 function ensureWatch(absPath) {
   const e = getEntry(absPath);
   if (e.watcher) return e;
-  const isText = kindOf(absPath) !== "pdf";
+  const isText = isTextKind(kindOf(absPath));
   e.watcher = chokidar.watch(absPath, { ignoreInitial: true });
   e.watcher.on("change", async () => {
     try {
@@ -117,7 +124,8 @@ fastify.get("/api/file", async (request, reply) => {
   }
   const info = await stat(p);
   const kind = kindOf(p);
-  if (kind === "pdf") {
+  if (!isTextKind(kind)) {
+    // Binary kinds (pdf, image) are fetched via /api/raw, not inlined.
     return { path: p, kind, mtimeMs: info.mtimeMs };
   }
   const content = await readFile(p, "utf8");
@@ -142,9 +150,9 @@ fastify.put("/api/file", async (request, reply) => {
     reply.code(400);
     return { error: "invalid or missing path" };
   }
-  if (kindOf(p) === "pdf") {
+  if (!isTextKind(kindOf(p))) {
     reply.code(400);
-    return { error: "cannot edit a pdf file" };
+    return { error: `cannot edit a ${kindOf(p)} file` };
   }
   const { content } = request.body ?? {};
   if (typeof content !== "string") {

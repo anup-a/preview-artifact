@@ -75,8 +75,8 @@ export function App() {
   // Live-reload subscription.
   useEffect(() => {
     return watchFile((msg) => {
-      if (kindRef.current === "pdf") {
-        setRawVersion(msg.mtimeMs); // reload the iframe
+      if (kindRef.current === "pdf" || kindRef.current === "image") {
+        setRawVersion(msg.mtimeMs); // reload the iframe/image
       } else if (dirtyRef.current) {
         setPendingReload(msg.content ?? ""); // ask before discarding edits
       } else {
@@ -87,7 +87,7 @@ export function App() {
 
   // Render read-mode HTML when body/kind/mode change (markdown + tex only).
   useEffect(() => {
-    if (mode !== "read" || kind === "pdf" || !readRef.current) return;
+    if (mode !== "read" || kind === "pdf" || kind === "image" || !readRef.current) return;
     readRef.current.innerHTML =
       kind === "tex" ? renderTex(body) : renderMarkdown(body);
     resolveImages(readRef.current);
@@ -124,7 +124,11 @@ export function App() {
       if (mod && e.key.toLowerCase() === "s") {
         e.preventDefault();
         if (dirtyRef.current) void save();
-      } else if (mod && e.key.toLowerCase() === "e" && kindRef.current !== "pdf") {
+      } else if (
+        mod &&
+        e.key.toLowerCase() === "e" &&
+        (kindRef.current === "markdown" || kindRef.current === "tex")
+      ) {
         e.preventDefault();
         setMode((m) => (m === "read" ? "edit" : "read"));
       }
@@ -138,7 +142,8 @@ export function App() {
   }
 
   const fileName = path.split("/").pop() ?? path;
-  const editable = kind !== "pdf";
+  const editable = kind === "markdown" || kind === "tex";
+  const binary = kind === "pdf" || kind === "image";
 
   return (
     <div className="app">
@@ -149,8 +154,10 @@ export function App() {
         </div>
         <div className="toolbar-actions">
           {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
-          {kind === "pdf" ? (
-            <span className="status clean">PDF · read-only</span>
+          {binary ? (
+            <span className="status clean">
+              {kind === "pdf" ? "PDF" : "Image"} · read-only
+            </span>
           ) : (
             <StatusPill dirty={dirty} saveState={saveState} />
           )}
@@ -193,6 +200,8 @@ export function App() {
       <main className={"content" + (kind === "pdf" ? " content--pdf" : "")}>
         {kind === "pdf" ? (
           <iframe className="pdf-view" title={fileName} src={rawUrl(rawVersion)} />
+        ) : kind === "image" ? (
+          <img className="image-view" alt={fileName} src={rawUrl(rawVersion)} />
         ) : mode === "read" ? (
           <article ref={readRef} className="markdown-body read-view" />
         ) : kind === "tex" ? (

@@ -363,6 +363,17 @@ body {
   background: hsl(var(--muted));
 }
 
+/* ---- Image viewer (read-only artifact) ---- */
+.image-view {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: calc(100vh - var(--toolbar-h) - 110px);
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
 /* ---- .tex source editor ---- */
 .source-input {
   width: 100%;
@@ -482,22 +493,35 @@ body {
   text-decoration-thickness: 1px;
 }
 
-/* Block spacing parity with the read view (GitHub-markdown rhythm). */
-.crepe-host .ProseMirror p,
+/* Block spacing + sizing parity with the read view (GitHub-markdown rhythm).
+   Crepe forces p to 16px/24px, so restore the read view's size/line-height. */
+.crepe-host .ProseMirror p {
+  font-size: inherit;
+  line-height: 1.8;
+  margin: 0 0 16px;
+  padding: 0;
+}
 .crepe-host .ProseMirror ul,
 .crepe-host .ProseMirror ol,
 .crepe-host .ProseMirror blockquote {
   margin: 0 0 16px;
 }
 .crepe-host .ProseMirror :is(ul, ol) { padding-left: 2em; }
-.crepe-host .ProseMirror li { margin: 0.25em 0; }
+.crepe-host .ProseMirror li { margin: 0.25em 0; line-height: 1.8; }
 .crepe-host .ProseMirror li > p { margin-bottom: 0.25em; }
 
+/* Use Crepe's own ::before bar (no extra border-left → no double bar). */
 .crepe-host .ProseMirror blockquote {
-  padding: 0 1em;
-  border-left: 0.25em solid hsl(var(--accent) / 0.5);
+  padding: 0 0 0 1.1em;
+  border-left: 0;
   color: hsl(var(--muted-foreground));
   font-style: italic;
+  line-height: 1.8;
+}
+.crepe-host .ProseMirror blockquote::before {
+  width: 4px;
+  border-radius: 2px;
+  background: hsl(var(--accent) / 0.5);
 }
 
 /* Hide Crepe's floating block handle (+ / drag grip) — it sits in the gutter
