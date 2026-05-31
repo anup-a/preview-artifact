@@ -1,5 +1,5 @@
 {
-  "name": "artifact-viewer",
+  "name": "preview-artifact",
   "version": "0.1.0",
   "description": "Open AI-agent markdown artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
