@@ -4,9 +4,23 @@
   "description": "Open AI-agent markdown / LaTeX / PDF artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
   "homepage": "https://github.com/anup-a/preview-artifact",
-  "repository": { "type": "git", "url": "git+https://github.com/anup-a/preview-artifact.git" },
-  "bugs": { "url": "https://github.com/anup-a/preview-artifact/issues" },
-  "keywords": ["markdown", "latex", "pdf", "viewer", "preview", "artifacts", "mermaid", "cli"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anup-a/preview-artifact.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anup-a/preview-artifact/issues"
+  },
+  "keywords": [
+    "markdown",
+    "latex",
+    "pdf",
+    "viewer",
+    "preview",
+    "artifacts",
+    "mermaid",
+    "cli"
+  ],
   "bin": {
     "preview-artifact": "bin/preview-artifact.js"
   },

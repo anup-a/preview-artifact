@@ -397,11 +397,62 @@ body {
   outline: none;
 }
 
-/* ---- Crepe editor host ---- */
+/* ---- Crepe editor host: themed to match the editorial read view ---- */
 .crepe-host {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
+  padding: 8px 6px;
+}
+
+/* Re-map Crepe's design tokens to our editorial palette + fonts. */
+.crepe-host .milkdown {
+  --crepe-font-title: var(--font-display);
+  --crepe-font-default: var(--font-serif);
+  --crepe-color-background: hsl(var(--card));
+  --crepe-color-on-background: hsl(var(--foreground));
+  --crepe-color-surface: hsl(var(--card));
+  --crepe-color-surface-low: hsl(var(--muted) / 0.6);
+  --crepe-color-on-surface: hsl(var(--foreground));
+  --crepe-color-on-surface-variant: hsl(var(--muted-foreground));
+  --crepe-color-outline: hsl(var(--border));
+  --crepe-color-primary: hsl(var(--accent));
+  --crepe-color-secondary: hsl(var(--accent) / 0.5);
+  --crepe-color-on-secondary: hsl(var(--accent-foreground));
+  --crepe-color-inverse: hsl(var(--foreground));
+  --crepe-color-on-inverse: hsl(var(--card));
+  --crepe-color-inline-code: hsl(var(--accent));
+  --crepe-color-inline-area: hsl(var(--muted) / 0.7);
+  --crepe-color-hover: hsl(var(--muted) / 0.6);
+  --crepe-color-selected: hsl(var(--accent) / 0.16);
+  --crepe-color-error: hsl(0 60% 45%);
+  --crepe-shadow-1: var(--shadow-sm);
+  --crepe-shadow-2: var(--shadow);
+}
+
+/* Typography parity with the read view. */
+.crepe-host .ProseMirror {
+  font-family: var(--font-serif);
+  font-size: 17.5px;
+  line-height: 1.8;
+  color: hsl(var(--foreground));
+  padding: 16px 28px 40px;
+}
+.crepe-host .ProseMirror :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  color: hsl(var(--heading));
+}
+.crepe-host .ProseMirror h1 { font-size: 2.4rem; }
+.crepe-host .ProseMirror h2 { font-size: 1.6rem; }
+.crepe-host .ProseMirror h3 { font-size: 1.25rem; }
+.crepe-host .ProseMirror a { color: hsl(var(--link)); }
+.crepe-host .ProseMirror blockquote {
+  border-left: 3px solid hsl(var(--accent) / 0.5);
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
 }
 
 /* ---- Error screen ---- */
