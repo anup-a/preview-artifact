@@ -98,6 +98,12 @@ artifact. The CLI self-daemonizes and returns immediately, so agents just run it
 model auto-invokes when you ask to preview something or after it writes a plan
 (no slash command to remember). See [`AGENTS.md`](./AGENTS.md) for details.
 
+> **CLI vs skill.** The `preview-artifact` **npm package is the actual program**
+> (it runs the viewer). The **skill** is just instructions telling the agent when
+> to run it — so installing the skill alone is enough: on first use it runs
+> `npm install -g preview-artifact` for you if the CLI is missing. Prefer the CLI
+> directly? Just `npm install -g preview-artifact` and skip the skill.
+
 ### Skill (any agent — recommended)
 
 Install the [`preview-artifact` skill](./skills/preview-artifact/SKILL.md) into
