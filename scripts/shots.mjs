@@ -38,8 +38,23 @@ await shot("article.md", "read-markdown.png");
 await shot("showcase.md", "showcase.png");
 await shot("showcase.md", "showcase-diagram.png", { scrollY: 360 });
 await shot("paper.tex", "latex.png");
-await shot("report.pdf", "pdf.png");
 await shot("showcase.md", "edit-markdown.png", { edit: true });
+
+// Panel shot: register several artifacts, open the sidebar, capture it.
+await fetch(`${BASE}/api/register`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    paths: ["showcase.md", "paper.tex", "report.pdf", "cover.png", "article.md"].map(
+      (f) => `${HOME}/.pa-demo/${f}`,
+    ),
+  }),
+}).catch(() => {});
+await page.addInitScript(() => localStorage.setItem("pa-sidebar", "1"));
+await page.goto(url("showcase.md"), { waitUntil: "networkidle" });
+await page.waitForTimeout(1600);
+await page.screenshot({ path: path.join(outDir, "panel.png") });
+console.log("wrote panel.png");
 
 await browser.close();
 console.log("done →", outDir);

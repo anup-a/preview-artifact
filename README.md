@@ -21,6 +21,11 @@ Editorial read view — serif display type, warm paper, orange frame:
 
 ![Read view](docs/screenshots/read-markdown.png)
 
+Side panel — open several artifacts at once and switch between them, plus
+recently-opened history (collapsible, closed by default):
+
+![Artifacts side panel](docs/screenshots/panel.png)
+
 Rich markdown — images, headings, and a live mermaid diagram, GFM tables, task
 lists and KaTeX math:
 
