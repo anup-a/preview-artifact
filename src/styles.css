@@ -398,18 +398,16 @@ body {
 }
 
 /* ---- Crepe editor host: themed to match the editorial read view ---- */
+/* No card — the editor sits directly on the paper, like the read view. */
 .crepe-host {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-  padding: 8px 6px;
+  background: transparent;
 }
 
 /* Re-map Crepe's design tokens to our editorial palette + fonts. */
 .crepe-host .milkdown {
   --crepe-font-title: var(--font-display);
   --crepe-font-default: var(--font-serif);
-  --crepe-color-background: hsl(var(--card));
+  --crepe-color-background: transparent;
   --crepe-color-on-background: hsl(var(--foreground));
   --crepe-color-surface: hsl(var(--card));
   --crepe-color-surface-low: hsl(var(--muted) / 0.6);
