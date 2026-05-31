@@ -158,6 +158,28 @@ body {
 .status.error { color: hsl(0 60% 45%); border-color: hsl(0 60% 45% / 0.3); background: hsl(0 60% 45% / 0.08); }
 
 /* ---- Segmented tab switch ---- */
+/* "Editing" pill — shown only in edit mode */
+.edit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: hsl(var(--accent));
+  background: hsl(var(--accent) / 0.1);
+  border: 1px solid hsl(var(--accent) / 0.3);
+  white-space: nowrap;
+}
+.edit-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
 .mode-switch {
   display: inline-flex;
   gap: 2px;
@@ -434,7 +456,7 @@ body {
   font-size: 17.5px;
   line-height: 1.8;
   color: hsl(var(--foreground));
-  padding: 16px 28px 40px;
+  padding: 8px 24px 40px; /* same text inset as the read view */
 }
 .crepe-host .ProseMirror :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--font-display);
@@ -443,10 +465,21 @@ body {
   line-height: 1.2;
   color: hsl(var(--heading));
 }
-.crepe-host .ProseMirror h1 { font-size: 2.4rem; }
-.crepe-host .ProseMirror h2 { font-size: 1.6rem; }
-.crepe-host .ProseMirror h3 { font-size: 1.25rem; }
-.crepe-host .ProseMirror a { color: hsl(var(--link)); }
+/* match the read view exactly */
+.crepe-host .ProseMirror h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.3em;
+}
+.crepe-host .ProseMirror h2 { font-size: 1.7rem; margin-top: 1.6em; }
+.crepe-host .ProseMirror h3 { font-size: 1.3rem; }
+.crepe-host .ProseMirror a {
+  color: hsl(var(--link));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
 .crepe-host .ProseMirror blockquote {
   border-left: 3px solid hsl(var(--accent) / 0.5);
   color: hsl(var(--muted-foreground));

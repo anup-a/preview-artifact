@@ -128,6 +128,7 @@ export function App() {
           <span className="file-path" title={path}>{path}</span>
         </div>
         <div className="toolbar-actions">
+          {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
           {kind === "pdf" ? (
             <span className="status clean">PDF · read-only</span>
           ) : (
