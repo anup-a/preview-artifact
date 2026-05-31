@@ -13,13 +13,13 @@
   --input: 38 22% 82%;
   --primary: 35 14% 13%;        /* near-black buttons */
   --primary-foreground: 40 33% 96%;
-  --accent: 18 60% 44%;         /* #b4542c terracotta (links, marks) */
+  --accent: 21 78% 46%;         /* #cf5b1c vivid orange (links, marks) */
   --accent-foreground: 40 33% 96%;
-  --ring: 18 60% 44%;
+  --ring: 21 78% 46%;
 
   --warning: 32 80% 42%;
   --success: 140 45% 36%;
-  --link: 18 60% 44%;           /* terracotta */
+  --link: 21 74% 44%;           /* orange */
   --heading: 35 16% 11%;        /* headings are near-black serif */
 
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
@@ -48,18 +48,22 @@ body,
 }
 
 body {
-  /* warm paper: lighter toward the top-center, warmer tan at the edges */
-  background-color: hsl(37 28% 88%);
-  background-image: radial-gradient(
-    115% 80% at 50% -8%,
-    hsl(42 46% 97%) 0%,
-    hsl(37 28% 88%) 100%
+  /* vivid orange frame: shows through #root's padding around the app */
+  background: linear-gradient(
+    145deg,
+    hsl(20 82% 47%) 0%,
+    hsl(25 80% 60%) 45%,
+    hsl(31 78% 78%) 100%
   );
-  background-attachment: fixed;
   color: hsl(var(--foreground));
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* The frame thickness — orange body shows in this padding. */
+#root {
+  padding: 14px;
 }
 
 :focus-visible {
@@ -71,6 +75,15 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  /* warm near-white paper, very subtle warm tint toward the edges */
+  background-color: hsl(42 24% 96%);
+  background-image: radial-gradient(
+    115% 80% at 50% -8%,
+    hsl(45 40% 98.5%) 0%,
+    hsl(42 22% 95%) 100%
+  );
 }
 
 /* ---- Toolbar ---- */
@@ -252,12 +265,6 @@ body {
 }
 .read-view.markdown-body h3 {
   font-size: 1.3rem;
-}
-/* The signature trailing em-dash on section titles. */
-.read-view.markdown-body :is(h1, h2, h3)::after {
-  content: " \2014";
-  color: hsl(var(--accent));
-  font-weight: 400;
 }
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) a {
   color: inherit;
