@@ -2,7 +2,8 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 
 import "highlight.js/styles/github.css";
-import "github-markdown-css/github-markdown-light.css";
+import "github-markdown-css/github-markdown.css";
+import "./theme"; // injects dark variants scoped to prefers-color-scheme
 import "./styles.css";
 
 const root = document.getElementById("root");

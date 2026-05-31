@@ -10,7 +10,15 @@ import taskLists from "markdown-it-task-lists";
 import hljs from "highlight.js";
 import mermaid from "mermaid";
 
-mermaid.initialize({ startOnLoad: false, theme: "default", securityLevel: "loose" });
+const prefersDark =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: prefersDark ? "dark" : "default",
+  securityLevel: "loose",
+});
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
