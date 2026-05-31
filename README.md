@@ -12,9 +12,21 @@ light and dark theme.
 
 Fully local. No cloud, no telemetry, no account.
 
+## Quick start
+
+**Step 1 — add the skill** so your agent (Claude Code, Cursor, …) opens artifacts for you:
+
 ```bash
-pretifact open docs/plans/2026-05-31-some-design.md
+npx skills add anup-a/preview-artifact
 ```
+
+**Step 2 — install the CLI** (the engine the skill runs):
+
+```bash
+npm install -g pretifact
+```
+
+That's it — the next time your agent writes a plan, it opens it in your browser. (Prefer to run it yourself? `pretifact open file.md`.)
 
 ## Screenshots
 
