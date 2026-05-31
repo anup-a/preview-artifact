@@ -4,8 +4,20 @@
 
 import { useEffect, useRef } from "react";
 import { Crepe } from "@milkdown/crepe";
+import { fileDir, assetUrl } from "./api";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
+
+// Resolve relative/local <img> sources to the daemon's asset URL so they show
+// in the editor too (cosmetic — Crepe serializes the original src on save).
+function resolveEditorImages(root: HTMLElement): void {
+  root.querySelectorAll("img").forEach((img) => {
+    const src = img.getAttribute("src") ?? "";
+    if (!src || /^(https?:|data:|blob:|\/api\/raw)/i.test(src)) return;
+    const abs = src.startsWith("/") ? src : `${fileDir}/${src}`;
+    img.setAttribute("src", assetUrl(abs));
+  });
+}
 
 interface EditorProps {
   /** Initial markdown body. Changing this remounts the editor (use a React key). */
@@ -40,9 +52,14 @@ export function Editor({ defaultValue, onChange }: EditorProps) {
         onChangeRef.current(markdown);
       });
     });
-    crepe.create();
+    crepe.create().then(() => resolveEditorImages(root));
+
+    // Crepe re-renders on edits; keep relative images resolved as they appear.
+    const observer = new MutationObserver(() => resolveEditorImages(root));
+    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["src"] });
 
     return () => {
+      observer.disconnect();
       crepe.destroy();
     };
     // defaultValue is intentionally read once; App remounts via `key` on reload.

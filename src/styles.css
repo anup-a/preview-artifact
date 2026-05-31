@@ -317,7 +317,7 @@ body {
 
 .read-view.markdown-body blockquote {
   color: hsl(var(--muted-foreground));
-  border-left: 3px solid hsl(var(--accent) / 0.5);
+  border-left: 0.25em solid hsl(var(--accent) / 0.5);
   font-style: italic;
 }
 
@@ -474,14 +474,28 @@ body {
 }
 .crepe-host .ProseMirror h2 { font-size: 1.7rem; margin-top: 1.6em; }
 .crepe-host .ProseMirror h3 { font-size: 1.3rem; }
+.crepe-host .ProseMirror :is(h3, h4, h5, h6) { margin-top: 1.5em; margin-bottom: 0.5em; }
 .crepe-host .ProseMirror a {
   color: hsl(var(--link));
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
 }
+
+/* Block spacing parity with the read view (GitHub-markdown rhythm). */
+.crepe-host .ProseMirror p,
+.crepe-host .ProseMirror ul,
+.crepe-host .ProseMirror ol,
 .crepe-host .ProseMirror blockquote {
-  border-left: 3px solid hsl(var(--accent) / 0.5);
+  margin: 0 0 16px;
+}
+.crepe-host .ProseMirror :is(ul, ol) { padding-left: 2em; }
+.crepe-host .ProseMirror li { margin: 0.25em 0; }
+.crepe-host .ProseMirror li > p { margin-bottom: 0.25em; }
+
+.crepe-host .ProseMirror blockquote {
+  padding: 0 1em;
+  border-left: 0.25em solid hsl(var(--accent) / 0.5);
   color: hsl(var(--muted-foreground));
   font-style: italic;
 }

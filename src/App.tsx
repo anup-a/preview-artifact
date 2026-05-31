@@ -2,7 +2,26 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./Editor";
 import { renderMarkdown, renderTex, runMermaid } from "./readview";
 import { splitFrontmatter, joinFrontmatter } from "./frontmatter";
-import { fetchFile, saveFile, watchFile, rawUrl, type FileKind } from "./api";
+import {
+  fetchFile,
+  saveFile,
+  watchFile,
+  rawUrl,
+  assetUrl,
+  fileDir,
+  type FileKind,
+} from "./api";
+
+// Rewrite local/relative <img> sources so they load through the daemon
+// (remote http(s)/data/blob URLs are left untouched).
+function resolveImages(container: HTMLElement): void {
+  container.querySelectorAll("img").forEach((img) => {
+    const src = img.getAttribute("src") ?? "";
+    if (!src || /^(https?:|data:|blob:)/i.test(src)) return;
+    const abs = src.startsWith("/") ? src : `${fileDir}/${src}`;
+    img.setAttribute("src", assetUrl(abs));
+  });
+}
 
 type Mode = "read" | "edit";
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -71,6 +90,7 @@ export function App() {
     if (mode !== "read" || kind === "pdf" || !readRef.current) return;
     readRef.current.innerHTML =
       kind === "tex" ? renderTex(body) : renderMarkdown(body);
+    resolveImages(readRef.current);
     if (kind === "markdown") void runMermaid(readRef.current);
   }, [mode, body, kind]);
 

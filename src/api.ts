@@ -22,6 +22,14 @@ export function rawUrl(version: number | string): string {
   return `/api/raw?${pathParam}&v=${version}`;
 }
 
+/** URL serving the raw bytes of an arbitrary local file (e.g. an image). */
+export function assetUrl(absPath: string): string {
+  return `/api/raw?path=${encodeURIComponent(absPath)}`;
+}
+
+/** Directory containing the current file (for resolving relative asset paths). */
+export const fileDir = filePath.slice(0, filePath.lastIndexOf("/"));
+
 export async function fetchFile(): Promise<FilePayload> {
   if (!filePath) throw new Error("No file specified (missing ?path= in URL)");
   const res = await fetch(`/api/file?${pathParam}`);

@@ -34,6 +34,23 @@ function kindOf(file) {
   return "markdown";
 }
 
+// Content-type for raw assets (PDFs and images embedded by markdown).
+const MIME = {
+  ".pdf": "application/pdf",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".svg": "image/svg+xml",
+  ".bmp": "image/bmp",
+  ".ico": "image/x-icon",
+};
+function mimeOf(file) {
+  return MIME[path.extname(file).toLowerCase()] ?? "application/octet-stream";
+}
+
 function isValidFile(p) {
   if (typeof p !== "string" || !p || !path.isAbsolute(p) || !existsSync(p)) return false;
   try {
@@ -115,8 +132,7 @@ fastify.get("/api/raw", async (request, reply) => {
     return reply.send({ error: "invalid or missing path" });
   }
   const buf = await readFile(p);
-  const type = kindOf(p) === "pdf" ? "application/pdf" : "application/octet-stream";
-  reply.header("Cache-Control", "no-store").type(type);
+  reply.header("Cache-Control", "no-store").type(mimeOf(p));
   return reply.send(buf);
 });
 

@@ -42,7 +42,8 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 
 - **Read mode** — rich typography (GitHub markdown CSS), syntax-highlighted
   code (highlight.js), rendered **mermaid** diagrams, GFM tables and task lists,
-  and **KaTeX math** (`$…$` / `$$…$$`).
+  **KaTeX math** (`$…$` / `$$…$$`), and **images** (remote URLs plus local files
+  resolved relative to the document, in both read and edit modes).
 - **LaTeX (`.tex`)** — display equations typeset by KaTeX with the rest shown as
   highlighted LaTeX source; editable and saveable as plain source.
 - **PDF (`.pdf`)** — embedded read-only viewer.
