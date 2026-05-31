@@ -94,21 +94,27 @@ Use it from any project — it's not tied to any particular repo.
 
 This tool is meant to be launched *by* your agent when it finishes writing an
 artifact. The CLI self-daemonizes and returns immediately, so agents just run it
-— no backgrounding needed. See [`AGENTS.md`](./AGENTS.md) for the canonical
-instructions; quick reference below.
+— no backgrounding needed. The preferred integration is the **skill**, which the
+model auto-invokes when you ask to preview something or after it writes a plan
+(no slash command to remember). See [`AGENTS.md`](./AGENTS.md) for details.
+
+### Skill (any agent — recommended)
+
+Install the [`preview-artifact` skill](./skills/preview-artifact/SKILL.md) into
+your agent (Claude Code, Cursor, …) via the open [skills](https://skills.sh) CLI:
+
+```bash
+npx skills add anup-a/preview-artifact
+```
 
 ### Claude Code (plugin)
 
-Install the plugin from this repo's marketplace, which adds the
-`/preview-artifact` command in every project:
+Or install it as a plugin from this repo's marketplace (ships the same skill):
 
 ```
 /plugin marketplace add anup-a/preview-artifact
 /plugin install preview-artifact@preview-artifact
 ```
-
-Then: `/preview-artifact path/to/file.md`. (When working inside this repo the
-command is also auto-available from [`.claude/commands/`](./.claude/commands/).)
 
 ### Codex (custom prompt)
 

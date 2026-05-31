@@ -41,8 +41,8 @@ Prints, e.g.:
 
 ### Notes by agent
 
-- **Claude Code** — use the `/preview-artifact <file>` slash command (shipped in
-  `.claude/commands/`), or just call the CLI via Bash (it returns immediately).
+- **Claude Code** — install the skill (`npx skills add anup-a/preview-artifact`
+  or the plugin marketplace); it auto-invokes. Or just call the CLI via Bash.
 - **Codex / shell-based agents** — run `preview-artifact open <file>` directly;
   it daemonizes itself, so no `nohup &` is required.
 - **Any agent** — if `preview-artifact` isn't on PATH, install it:

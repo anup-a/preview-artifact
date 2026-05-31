@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "preview-artifact",
-      "source": "./plugins/claude",
-      "description": "Adds the /preview-artifact command to open .md/.tex/.pdf files in the local browser viewer.",
+      "source": ".",
+      "description": "Ships the preview-artifact skill: open .md/.tex/.pdf/image artifacts in the local browser viewer (read + edit + live-reload).",
       "version": "0.1.0"
     }
   ]
