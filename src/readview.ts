@@ -17,13 +17,9 @@ import hljs from "highlight.js";
 import katex from "katex";
 import mermaid from "mermaid";
 
-const prefersDark =
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-
 mermaid.initialize({
   startOnLoad: false,
-  theme: prefersDark ? "dark" : "default",
+  theme: "neutral", // clean grayscale, sits well on the warm cream paper
   securityLevel: "loose",
 });
 

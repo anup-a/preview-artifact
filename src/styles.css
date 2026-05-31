@@ -1,61 +1,38 @@
-/* shadcn-style theming: neutral (zinc) token palette, light + dark via
-   prefers-color-scheme. Colors are HSL channel triples consumed with
-   hsl(var(--token)) so opacity modifiers work via hsl(var(--token) / .9). */
+/* Warm editorial theme — cream paper, serif display headings, terracotta accent,
+   hairline rules, generous whitespace. A single light theme (matches the
+   reference); the UI chrome stays sans, the reading surface is serif. */
 
 :root {
-  /* Atom One Light */
-  --background: 0 0% 98%;       /* #fafafa */
-  --foreground: 228 8% 24%;     /* #383a42 */
-  --card: 0 0% 100%;
-  --card-foreground: 228 8% 24%;
-  --muted: 240 6% 94%;          /* #ededee */
-  --muted-foreground: 229 4% 60%; /* #969799 */
-  --border: 240 5% 88%;         /* #dfdfe1 */
-  --input: 240 5% 88%;
-  --primary: 228 8% 20%;
-  --primary-foreground: 0 0% 98%;
-  --accent: 240 6% 94%;
-  --accent-foreground: 228 8% 20%;
-  --ring: 221 87% 60%;          /* #4078f2 atom blue */
+  --background: 40 33% 94%;     /* #f4f0e9 warm cream paper */
+  --foreground: 35 14% 13%;     /* #241f1a near-black, warm */
+  --card: 40 44% 97%;           /* #faf7f1 subtle lighter surface (panels) */
+  --card-foreground: 35 14% 13%;
+  --muted: 38 26% 88%;          /* #e8e2d6 code / inline bg */
+  --muted-foreground: 33 9% 40%; /* #6e665b meta text */
+  --border: 38 22% 82%;         /* #ddd5c8 warm hairline */
+  --input: 38 22% 82%;
+  --primary: 35 14% 13%;        /* near-black buttons */
+  --primary-foreground: 40 33% 96%;
+  --accent: 18 60% 44%;         /* #b4542c terracotta (links, marks) */
+  --accent-foreground: 40 33% 96%;
+  --ring: 18 60% 44%;
 
-  --warning: 38 92% 45%;
-  --success: 142 64% 38%;
-  --link: 221 87% 53%;          /* #4078f2 */
-  --heading: 301 63% 39%;       /* #a626a4 atom one light purple */
+  --warning: 32 80% 42%;
+  --success: 140 45% 36%;
+  --link: 18 60% 44%;           /* terracotta */
+  --heading: 35 16% 11%;        /* headings are near-black serif */
 
-  --radius: 0.65rem;
-  --toolbar-h: 56px;
-  --content-max: 880px;
+  --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+    "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 
-  --shadow-sm: 0 1px 2px 0 hsl(240 10% 3.9% / 0.05);
-  --shadow:
-    0 1px 3px 0 hsl(240 10% 3.9% / 0.08), 0 1px 2px -1px hsl(240 10% 3.9% / 0.08);
-}
+  --radius: 0.6rem;
+  --toolbar-h: 58px;
+  --content-max: 720px;
 
-@media (prefers-color-scheme: dark) {
-  /* Atom One Dark */
-  :root {
-    --background: 220 13% 18%;    /* #282c34 canvas */
-    --foreground: 219 14% 71%;    /* #abb2bf soft text */
-    --card: 216 13% 15%;          /* #21252b — editor/panel surfaces */
-    --card-foreground: 219 14% 71%;
-    --muted: 219 14% 20%;         /* #2c313a — code blocks, tab track */
-    --muted-foreground: 220 10% 55%; /* #828997 */
-    --border: 225 13% 26%;        /* #3a3f4b */
-    --input: 225 13% 26%;
-    --primary: 219 14% 78%;       /* surface for the Save button */
-    --primary-foreground: 220 13% 18%;
-    --accent: 219 14% 24%;
-    --accent-foreground: 219 14% 85%;
-    --ring: 207 82% 66%;          /* #61afef atom blue */
-
-    --link: 207 82% 66%;          /* #61afef */
-    --heading: 286 60% 67%;       /* #c678dd atom one dark purple */
-
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
-    --shadow:
-      0 1px 3px 0 hsl(0 0% 0% / 0.5), 0 1px 2px -1px hsl(0 0% 0% / 0.5);
-  }
+  --shadow-sm: 0 1px 2px 0 hsl(35 14% 13% / 0.05);
+  --shadow: 0 1px 3px 0 hsl(35 14% 13% / 0.07), 0 1px 2px -1px hsl(35 14% 13% / 0.07);
 }
 
 * {
@@ -72,12 +49,9 @@ body,
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 :focus-visible {
@@ -99,9 +73,9 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 20px;
+  padding: 0 24px;
   background: hsl(var(--background) / 0.85);
-  backdrop-filter: saturate(180%) blur(8px);
+  backdrop-filter: saturate(140%) blur(8px);
   border-bottom: 1px solid hsl(var(--border));
   position: sticky;
   top: 0;
@@ -117,7 +91,7 @@ body {
 
 .file-name {
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 14px;
   letter-spacing: -0.01em;
 }
 
@@ -143,10 +117,10 @@ body {
   gap: 6px;
   font-size: 12px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 11px;
   border-radius: 999px;
   border: 1px solid hsl(var(--border));
-  background: hsl(var(--muted) / 0.6);
+  background: hsl(var(--card));
   color: hsl(var(--muted-foreground));
   white-space: nowrap;
 }
@@ -158,13 +132,11 @@ body {
   background: currentColor;
   opacity: 0.7;
 }
-.status.clean::before { background: hsl(var(--muted-foreground)); }
-.status.dirty { color: hsl(var(--warning)); border-color: hsl(var(--warning) / 0.3); background: hsl(var(--warning) / 0.1); }
-.status.saving { color: hsl(var(--foreground)); }
-.status.saved { color: hsl(var(--success)); border-color: hsl(var(--success) / 0.3); background: hsl(var(--success) / 0.1); }
-.status.error { color: hsl(0 72% 51%); border-color: hsl(0 72% 51% / 0.3); background: hsl(0 72% 51% / 0.1); }
+.status.dirty { color: hsl(var(--warning)); border-color: hsl(var(--warning) / 0.3); background: hsl(var(--warning) / 0.08); }
+.status.saved { color: hsl(var(--success)); border-color: hsl(var(--success) / 0.3); background: hsl(var(--success) / 0.08); }
+.status.error { color: hsl(0 60% 45%); border-color: hsl(0 60% 45% / 0.3); background: hsl(0 60% 45% / 0.08); }
 
-/* ---- Segmented tab switch (shadcn Tabs) ---- */
+/* ---- Segmented tab switch ---- */
 .mode-switch {
   display: inline-flex;
   gap: 2px;
@@ -175,7 +147,7 @@ body {
 .mode-switch button {
   border: 0;
   background: transparent;
-  padding: 5px 13px;
+  padding: 5px 14px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -187,7 +159,7 @@ body {
   color: hsl(var(--foreground));
 }
 .mode-switch button.active {
-  background: hsl(var(--background));
+  background: hsl(var(--card));
   color: hsl(var(--foreground));
   box-shadow: var(--shadow-sm);
 }
@@ -197,7 +169,7 @@ body {
   display: inline-flex;
   align-items: center;
   height: 34px;
-  padding: 0 15px;
+  padding: 0 16px;
   border: 0;
   border-radius: calc(var(--radius) - 2px);
   font-size: 13px;
@@ -207,120 +179,131 @@ body {
   color: hsl(var(--primary-foreground));
   transition: opacity 0.15s, background 0.15s;
 }
-.save-btn:not(:disabled):hover {
-  background: hsl(var(--primary) / 0.9);
-}
-.save-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+.save-btn:not(:disabled):hover { background: hsl(var(--primary) / 0.88); }
+.save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ---- Reload banner (shadcn Alert) ---- */
+/* ---- Reload banner ---- */
 .reload-banner {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 12px 20px 0;
+  margin: 14px 24px 0;
   padding: 11px 14px;
   background: hsl(var(--warning) / 0.08);
   border: 1px solid hsl(var(--warning) / 0.3);
   border-radius: var(--radius);
   font-size: 13px;
-  color: hsl(var(--foreground));
 }
 .reload-banner button {
   border: 1px solid hsl(var(--border));
-  background: hsl(var(--background));
+  background: hsl(var(--card));
   color: hsl(var(--foreground));
   border-radius: calc(var(--radius) - 4px);
   padding: 5px 11px;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s;
 }
-.reload-banner button:hover {
-  background: hsl(var(--accent));
-}
+.reload-banner button:hover { background: hsl(var(--muted)); }
 
-/* ---- Content area ---- */
+/* ---- Content ---- */
 .content {
   flex: 1 1 auto;
   overflow: auto;
   display: flex;
   justify-content: center;
-  /* flex-start so the content card sizes to its own height instead of being
-     stretched to the viewport (which would clip the card border mid-document). */
   align-items: flex-start;
-  padding: 28px 20px 120px;
+  padding: 56px 24px 140px;
 }
 
-/* No card: content reads directly on the page background. */
+/* ---- Read view: editorial serif ---- */
 .read-view.markdown-body {
   max-width: var(--content-max);
   width: 100%;
-  padding: 8px 24px 0;
   background: transparent;
   color: hsl(var(--foreground));
-  font-size: 15.5px;
-  line-height: 1.7;
+  font-family: var(--font-serif);
+  font-size: 17.5px;
+  line-height: 1.8;
 }
 
-/* Headings in the accent color; never render as links (anchor permalinks). */
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-serif);
   color: hsl(var(--heading));
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+/* The signature trailing em-dash on section titles. */
+.read-view.markdown-body :is(h1, h2, h3)::after {
+  content: " \2014";
+  color: hsl(var(--accent));
+  font-weight: 400;
 }
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) a {
   color: inherit;
   text-decoration: none;
 }
-/* heading underline rules (h1/h2) tuned to our border token */
 .read-view.markdown-body :is(h1, h2) {
-  border-bottom-color: hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.3em;
 }
 
 .read-view.markdown-body a {
   color: hsl(var(--link));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
 }
 
-/* Code blocks + inline code use the muted surface so they stand out without a
-   card. The highlight.js theme provides token colors; we own the background. */
-.read-view.markdown-body pre {
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-}
-.read-view.markdown-body :not(pre) > code {
-  background: hsl(var(--muted));
-  color: hsl(var(--foreground));
+.read-view.markdown-body hr {
+  height: 1px;
+  background: hsl(var(--border));
+  border: 0;
+  margin: 2.4em 0;
 }
 
 .read-view.markdown-body blockquote {
   color: hsl(var(--muted-foreground));
-  border-left-color: hsl(var(--border));
+  border-left: 3px solid hsl(var(--accent) / 0.5);
+  font-style: italic;
+}
+
+/* code stays monospace; subtle warm surface */
+.read-view.markdown-body pre {
+  background: hsl(var(--muted) / 0.6);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  font-size: 0.86em;
+}
+.read-view.markdown-body :not(pre) > code {
+  background: hsl(var(--muted) / 0.7);
+  color: hsl(var(--foreground));
+  font-size: 0.85em;
 }
 
 .read-view.markdown-body :is(table tr, table td, table th) {
   border-color: hsl(var(--border));
 }
-.read-view.markdown-body table tr {
+.read-view.markdown-body table tr { background: transparent; }
+
+.read-view pre.mermaid {
   background: transparent;
-}
-.read-view.markdown-body hr {
-  background: hsl(var(--border));
+  border: 0;
+  text-align: center;
+  margin: 24px 0;
+  padding: 0;
 }
 
+/* ---- Edit view ---- */
 .edit-view {
   max-width: var(--content-max);
   width: 100%;
 }
 
-/* ---- PDF viewer (full-bleed, read-only) ---- */
-.content--pdf {
-  display: block;
-  padding: 0;
-}
+/* ---- PDF viewer ---- */
+.content--pdf { display: block; padding: 0; }
 .pdf-view {
   width: 100%;
   height: 100%;
@@ -332,7 +315,7 @@ body {
 /* ---- .tex source editor ---- */
 .source-input {
   width: 100%;
-  min-height: calc(100vh - var(--toolbar-h) - 80px);
+  min-height: calc(100vh - var(--toolbar-h) - 120px);
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   background: hsl(var(--card));
@@ -345,28 +328,18 @@ body {
   outline: none;
   tab-size: 2;
 }
-.source-input:focus-visible {
-  border-color: hsl(var(--ring));
-  outline: none;
-}
+.source-input:focus-visible { border-color: hsl(var(--ring)); outline: none; }
 
-/* ---- KaTeX display equations (in .tex read view) ---- */
-.read-view .tex-math {
-  margin: 18px 0;
-  padding: 6px 0;
-  overflow-x: auto;
-}
-.read-view .tex-math .katex-display {
-  margin: 0;
-}
+/* ---- KaTeX display equations ---- */
+.read-view .tex-math { margin: 18px 0; padding: 6px 0; overflow-x: auto; }
+.read-view .tex-math .katex-display { margin: 0; }
 
-/* ---- Frontmatter panel (shadcn Card) ---- */
+/* ---- Frontmatter panel ---- */
 .frontmatter-panel {
   margin-bottom: 14px;
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   background: hsl(var(--card));
-  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 .frontmatter-panel summary {
@@ -379,9 +352,7 @@ body {
   letter-spacing: 0.06em;
   user-select: none;
 }
-.frontmatter-panel summary:hover {
-  color: hsl(var(--foreground));
-}
+.frontmatter-panel summary:hover { color: hsl(var(--foreground)); }
 .frontmatter-input {
   width: 100%;
   border: 0;
@@ -402,17 +373,6 @@ body {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
-
-/* mermaid diagrams centered with breathing room */
-.read-view pre.mermaid {
-  background: transparent;
-  border: 0;
-  text-align: center;
-  margin: 24px 0;
-  padding: 0;
 }
 
 /* ---- Error screen ---- */
@@ -422,22 +382,16 @@ body {
   justify-content: center;
   height: 100%;
   text-align: center;
-  color: hsl(0 72% 51%);
+  color: hsl(0 60% 45%);
   font-family: ui-monospace, monospace;
   line-height: 1.6;
   padding: 24px;
 }
 
-/* ---- Scrollbar polish ---- */
-.content::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
+/* ---- Scrollbar ---- */
+.content::-webkit-scrollbar { width: 12px; height: 12px; }
 .content::-webkit-scrollbar-thumb {
   background: hsl(var(--border));
   border: 3px solid hsl(var(--background));
   border-radius: 999px;
-}
-.content::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
 }
