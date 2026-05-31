@@ -20,32 +20,31 @@ Supported file types:
 
 ## How an agent should launch it for the user
 
-The CLI starts a long-running local server, so **run it detached / in the
-background** — never block on it.
+Just run it — **no backgrounding needed.** A single shared daemon serves every
+file; the CLI auto-starts it (detached) on first use, reuses it afterward, and
+**returns immediately** after printing the URL:
 
 ```bash
 preview-artifact open path/to/file.md
 ```
 
-It prints the URL it bound to, e.g.:
+Prints, e.g.:
 
 ```
-[artifact-viewer] file.md → http://127.0.0.1:4317
+[preview-artifact] file.md → http://127.0.0.1:4317/?path=%2Fabs%2Fpath%2Ffile.md
 ```
 
-- Read that first line of output to get the URL and report it to the user.
-- The browser opens automatically; pass `--no-open` to suppress that.
-- To stop it, kill the process (Ctrl-C / SIGTERM).
+- Read that line to get the URL and report it to the user.
+- The browser opens automatically; pass `--no-open` to suppress it.
+- Opening more files reuses the same daemon (different `?path=`).
+- `preview-artifact stop` shuts the daemon down. State: `~/.preview-artifact/`.
 
-### Background-launch patterns by agent
+### Notes by agent
 
 - **Claude Code** — use the `/preview-artifact <file>` slash command (shipped in
-  `.claude/commands/`), or run the Bash tool with `run_in_background: true`.
-- **Codex / shell-based agents** — detach so it survives the turn:
-  ```bash
-  nohup preview-artifact open path/to/file.md >/tmp/preview-artifact.log 2>&1 &
-  sleep 2 && grep -o 'http://[^ ]*' /tmp/preview-artifact.log | head -1
-  ```
+  `.claude/commands/`), or just call the CLI via Bash (it returns immediately).
+- **Codex / shell-based agents** — run `preview-artifact open <file>` directly;
+  it daemonizes itself, so no `nohup &` is required.
 - **Any agent** — if `preview-artifact` isn't on PATH, the repo hasn't been
   linked; run `npm install && npm run build && npm link` here first.
 

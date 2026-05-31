@@ -1,24 +1,36 @@
-// Thin client for the local Fastify server. All requests are same-origin
-// (the server serves this SPA), so no base URL or auth is needed.
+// Thin client for the local daemon. The file to view is taken from the page's
+// `?path=` query parameter and forwarded to every endpoint, so one daemon can
+// serve any number of files.
 
 export type FileKind = "markdown" | "tex" | "pdf";
 
 export interface FilePayload {
   path: string;
   kind: FileKind;
-  /** Absent for binary kinds (pdf) — fetch those via /api/raw. */
+  /** Absent for binary kinds (pdf) — fetch those via rawUrl(). */
   content?: string;
   mtimeMs: number;
 }
 
+/** Absolute path of the file this page is viewing (from the URL). */
+export const filePath = new URLSearchParams(location.search).get("path") ?? "";
+
+const pathParam = `path=${encodeURIComponent(filePath)}`;
+
+/** URL for the raw bytes of the file (used to embed PDFs). */
+export function rawUrl(version: number | string): string {
+  return `/api/raw?${pathParam}&v=${version}`;
+}
+
 export async function fetchFile(): Promise<FilePayload> {
-  const res = await fetch("/api/file");
+  if (!filePath) throw new Error("No file specified (missing ?path= in URL)");
+  const res = await fetch(`/api/file?${pathParam}`);
   if (!res.ok) throw new Error(`Failed to load file: ${res.status}`);
   return res.json();
 }
 
 export async function saveFile(content: string): Promise<{ mtimeMs: number }> {
-  const res = await fetch("/api/file", {
+  const res = await fetch(`/api/file?${pathParam}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content }),
@@ -32,7 +44,7 @@ export type ReloadMessage = { type: "reload"; content?: string; mtimeMs: number 
 /** Subscribe to external file changes. Returns an unsubscribe function. */
 export function watchFile(onReload: (msg: ReloadMessage) => void): () => void {
   const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${location.host}/ws`);
+  const ws = new WebSocket(`${proto}://${location.host}/ws?${pathParam}`);
   ws.addEventListener("message", (event) => {
     try {
       const msg = JSON.parse(event.data);

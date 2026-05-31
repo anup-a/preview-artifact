@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./Editor";
 import { renderMarkdown, renderTex, runMermaid } from "./readview";
 import { splitFrontmatter, joinFrontmatter } from "./frontmatter";
-import { fetchFile, saveFile, watchFile, type FileKind } from "./api";
+import { fetchFile, saveFile, watchFile, rawUrl, type FileKind } from "./api";
 
 type Mode = "read" | "edit";
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -171,7 +171,7 @@ export function App() {
 
       <main className={"content" + (kind === "pdf" ? " content--pdf" : "")}>
         {kind === "pdf" ? (
-          <iframe className="pdf-view" title={fileName} src={`/api/raw?v=${rawVersion}`} />
+          <iframe className="pdf-view" title={fileName} src={rawUrl(rawVersion)} />
         ) : mode === "read" ? (
           <article ref={readRef} className="markdown-body read-view" />
         ) : kind === "tex" ? (

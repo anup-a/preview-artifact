@@ -78,11 +78,11 @@ A `/preview-artifact` slash command ships in [`.claude/commands/`](./.claude/com
 
 ### Codex / Cursor / Aider / shell-based agents
 
-These read `AGENTS.md` automatically. They can launch it directly:
+These read `AGENTS.md` automatically. They can launch it directly — no
+backgrounding needed, the CLI self-daemonizes and returns immediately:
 
 ```bash
-nohup preview-artifact open path/to/file.md >/tmp/preview-artifact.log 2>&1 &
-sleep 2 && grep -o 'http://[^ ]*' /tmp/preview-artifact.log | head -1
+preview-artifact open path/to/file.md   # prints the URL, then returns
 ```
 
 ### Any agent without PATH access to the global bin
@@ -95,31 +95,39 @@ node /absolute/path/to/preview-artifact/bin/preview-artifact.js open file.md
 
 ## How it works
 
+One shared **daemon** serves every file; the file is passed as a `?path=` query
+parameter rather than getting its own server/port. The CLI auto-starts the
+daemon (detached) on first use, reuses it afterward, and records its port in
+`~/.preview-artifact/daemon.json`.
+
 ```
-bin/preview-artifact.js  CLI — resolves the file, starts the server
-server/index.mjs         Fastify: serves the SPA, GET/PUT /api/file, /ws live-reload
+bin/preview-artifact.js  CLI — ensures the daemon is up, opens /?path=<file>
+server/index.mjs         daemon: serves the SPA, GET/PUT /api/file?path=,
+                         GET /api/raw?path= (pdf bytes), /ws?path= live-reload
 src/                     Vite + React SPA
   App.tsx                  orchestration: load, read/edit toggle, save, reload
-  readview.ts              markdown-it + highlight.js + mermaid (read mode)
-  Editor.tsx               Milkdown Crepe wrapper (edit mode)
+  readview.ts              markdown-it + highlight.js + mermaid + KaTeX (read mode)
+  Editor.tsx               Milkdown Crepe wrapper (markdown edit mode)
   frontmatter.ts           split/join YAML frontmatter so it never round-trips
 .claude/commands/        Claude Code /preview-artifact slash command
 AGENTS.md                instructions for coding agents
 ```
 
-The frontmatter is sliced off before the editor sees the body and re-attached
-verbatim on save — that's what guarantees YAML survives editing untouched.
+- Binds to `127.0.0.1` only and sets no CORS headers, so cross-origin pages
+  can't read API responses or perform preflighted writes.
+- Markdown frontmatter is sliced off before the editor sees the body and
+  re-attached verbatim on save, so YAML survives editing untouched.
 
 ## Development
 
 ```bash
-npm run dev        # Vite dev server (proxies /api + /ws to the running server)
-# in another terminal:
-ARTIFACT_FILE=sample.md node server/index.mjs
+node server/index.mjs                 # start the daemon (default port 4317)
+npm run dev                           # Vite dev server, proxies /api + /ws to 4317
+# then open http://localhost:5173/?path=/abs/path/to/file.md
 npm run typecheck
 ```
 
-After any change under `src/`, run `npm run build` — the CLI serves the built
+After any change under `src/`, run `npm run build` — the daemon serves the built
 `dist/`, not live source.
 
 ## Scope
