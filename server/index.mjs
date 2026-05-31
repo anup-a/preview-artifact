@@ -102,7 +102,9 @@ function registerArtifacts(paths, ts) {
   for (const p of paths) {
     if (!isValidFile(p)) continue;
     changed = true;
-    opened = [p, ...opened.filter((x) => x !== p)];
+    // `opened` keeps stable insertion order — re-viewing a file never reshuffles it.
+    if (!opened.includes(p)) opened.push(p);
+    // `recents` is a history list, most-recent first.
     recents = [{ path: p, ts }, ...recents.filter((r) => r.path !== p)].slice(0, RECENTS_MAX);
   }
   if (changed) void saveRecents();
