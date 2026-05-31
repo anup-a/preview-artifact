@@ -1,11 +1,11 @@
-# AGENTS.md — preview-artifact
+# AGENTS.md — Pretifact
 
 Guidance for coding agents (Claude Code, Codex, Cursor, Aider, etc.) working in
 or using this repository.
 
 ## What this tool is
 
-`preview-artifact` is a **local** CLI that opens an artifact in the browser with
+`pretifact` is a **local** CLI that opens an artifact in the browser with
 a beautiful read view and (for text formats) a WYSIWYG/source edit mode that
 **saves back to the same file** and **live-reloads** when the file changes on
 disk. Built for the artifacts agents produce: plans, design docs, audit reports,
@@ -25,33 +25,33 @@ file; the CLI auto-starts it (detached) on first use, reuses it afterward, and
 **returns immediately** after printing the URL:
 
 ```bash
-preview-artifact open path/to/file.md
+pretifact open path/to/file.md
 ```
 
 Prints, e.g.:
 
 ```
-[preview-artifact] file.md → http://127.0.0.1:4317/?path=%2Fabs%2Fpath%2Ffile.md
+[pretifact] file.md → http://127.0.0.1:4317/?path=%2Fabs%2Fpath%2Ffile.md
 ```
 
 - Read that line to get the URL and report it to the user.
 - The browser opens automatically; pass `--no-open` to suppress it.
 - Opening more files reuses the same daemon (different `?path=`).
-- `preview-artifact stop` shuts the daemon down. State: `~/.preview-artifact/`.
+- `pretifact stop` shuts the daemon down. State: `~/.pretifact/`.
 
 ### Notes by agent
 
 - **Claude Code** — install the skill (`npx skills add anup-a/preview-artifact`
   or the plugin marketplace); it auto-invokes. Or just call the CLI via Bash.
-- **Codex / shell-based agents** — run `preview-artifact open <file>` directly;
+- **Codex / shell-based agents** — run `pretifact open <file>` directly;
   it daemonizes itself, so no `nohup &` is required.
-- **Any agent** — if `preview-artifact` isn't on PATH, install it:
-  `npm install -g preview-artifact`.
+- **Any agent** — if `pretifact` isn't on PATH, install it:
+  `npm install -g pretifact`.
 
 ## Prerequisites
 
 - Node ≥ 18.
-- Install once: `npm install -g preview-artifact` (or `npm link` from a clone
+- Install once: `npm install -g pretifact` (or `npm link` from a clone
   when developing this repo).
 
 ## Working ON this repo (not just using it)

@@ -1,7 +1,7 @@
-// preview-artifact daemon.
+// pretifact daemon.
 //
 // A single long-lived local server that can view ANY file passed as a `?path=`
-// query parameter — no more one-server-per-file. The CLI (bin/preview-artifact.js)
+// query parameter — no more one-server-per-file. The CLI (bin/pretifact.js)
 // starts this once, then every `open` just points the browser at
 // http://127.0.0.1:<port>/?path=<absolute-file>.
 //
@@ -20,11 +20,11 @@ import chokidar from "chokidar";
 
 const distDir = fileURLToPath(new URL("../dist", import.meta.url));
 if (!existsSync(distDir)) {
-  console.error(`[preview-artifact] missing build output: ${distDir}\nRun: npm run build`);
+  console.error(`[pretifact] missing build output: ${distDir}\nRun: npm run build`);
   process.exit(1);
 }
 
-const STATE_DIR = path.join(os.homedir(), ".preview-artifact");
+const STATE_DIR = path.join(os.homedir(), ".pretifact");
 const STATE_FILE = path.join(STATE_DIR, "daemon.json");
 
 const IMAGE_EXT = new Set([
@@ -89,7 +89,7 @@ async function saveRecents() {
     await mkdir(STATE_DIR, { recursive: true });
     await writeFile(RECENTS_FILE, JSON.stringify(recents.slice(0, RECENTS_MAX)));
   } catch (err) {
-    console.error("[preview-artifact] recents save error:", err);
+    console.error("[pretifact] recents save error:", err);
   }
 }
 
@@ -146,7 +146,7 @@ function ensureWatch(absPath) {
         }
       }
     } catch (err) {
-      console.error("[preview-artifact] watch error:", err);
+      console.error("[pretifact] watch error:", err);
     }
   });
   return e;
@@ -157,7 +157,7 @@ await fastify.register(fastifyWebsocket);
 await fastify.register(fastifyStatic, { root: distDir });
 
 // Health check with an app signature so the CLI can tell it's really us.
-fastify.get("/api/health", async () => ({ app: "preview-artifact", ok: true }));
+fastify.get("/api/health", async () => ({ app: "pretifact", ok: true }));
 
 // The sidebar's two sections: this session's open artifacts + recent history.
 fastify.get("/api/artifacts", async () => {
@@ -273,7 +273,7 @@ loadRecents();
 const port = await listenOnFreePort(Number(process.env.ARTIFACT_PORT) || 4317);
 await mkdir(STATE_DIR, { recursive: true });
 await writeFile(STATE_FILE, JSON.stringify({ port, pid: process.pid }));
-console.log(`[preview-artifact] daemon listening on http://127.0.0.1:${port}`);
+console.log(`[pretifact] daemon listening on http://127.0.0.1:${port}`);
 
 const shutdown = async () => {
   for (const entry of entries.values()) {

@@ -1,6 +1,6 @@
 # Pretifact
 
-**Pretifact** (the `preview-artifact` npm package) opens the artifacts your coding
+**Pretifact** opens the artifacts your coding
 agents produce (plans, design docs, audit reports, papers) in the browser —
 **read them beautifully, edit them in place, save back to disk, and live-reload**
 when an agent rewrites the file.
@@ -13,7 +13,7 @@ light and dark theme.
 Fully local. No cloud, no telemetry, no account.
 
 ```bash
-preview-artifact open docs/plans/2026-05-31-some-design.md
+pretifact open docs/plans/2026-05-31-some-design.md
 ```
 
 ## Screenshots
@@ -63,7 +63,7 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 - **Edit mode** — Milkdown (ProseMirror) WYSIWYG that round-trips markdown
   faithfully. YAML frontmatter is split into its own panel so the editor can
   never corrupt it.
-- **Side panel** — open several artifacts at once (`preview-artifact open a.md b.tex c.pdf`),
+- **Side panel** — open several artifacts at once (`pretifact open a.md b.tex c.pdf`),
   switch between them, and pick from recently-opened history. Updates live as the
   agent opens more. Collapsible.
 - **Save** — writes back to the same file. `Cmd/Ctrl+S`.
@@ -76,7 +76,7 @@ frontmatter, task lists — and deserve a real reading surface you can also edit
 Requires Node ≥ 18.
 
 ```bash
-npm install -g preview-artifact
+npm install -g pretifact
 ```
 
 <details>
@@ -95,12 +95,12 @@ cd preview-artifact && npm install && npm link
 ## Usage
 
 ```bash
-preview-artifact open path/to/file.md   # open in the browser
-preview-artifact open a.md b.tex c.pdf  # open several into the side panel
-preview-artifact path/to/file.md        # shorthand
-preview-artifact open file.md --no-open # start server without launching a browser
-preview-artifact stop                   # stop the daemon
-preview-artifact --help
+pretifact open path/to/file.md   # open in the browser
+pretifact open a.md b.tex c.pdf  # open several into the side panel
+pretifact path/to/file.md        # shorthand
+pretifact open file.md --no-open # start server without launching a browser
+pretifact stop                   # stop the daemon
+pretifact --help
 ```
 
 Use it from any project — it's not tied to any particular repo.
@@ -113,11 +113,11 @@ artifact. The CLI self-daemonizes and returns immediately, so agents just run it
 when you ask to preview something or after it writes a plan (no slash command to
 remember). See [`AGENTS.md`](./AGENTS.md) for details.
 
-> **CLI vs skill.** The `preview-artifact` **npm package is the actual program**
+> **CLI vs skill.** The `pretifact` **npm package is the actual program**
 > (it runs the viewer). The **skill** is just instructions telling the agent when
 > to run it — installing the skill alone is enough: on first use it runs
-> `npm install -g preview-artifact` for you if the CLI is missing. Prefer the CLI
-> directly? Just `npm install -g preview-artifact` and skip the skill.
+> `npm install -g pretifact` for you if the CLI is missing. Prefer the CLI
+> directly? Just `npm install -g pretifact` and skip the skill.
 
 ### Claude Code (plugin — recommended)
 
@@ -153,10 +153,10 @@ cp plugins/codex/prompts/preview-artifact.md ~/.codex/prompts/
 They read `AGENTS.md` automatically and can launch it directly:
 
 ```bash
-preview-artifact open path/to/file.md   # prints the URL, then returns
+pretifact open path/to/file.md   # prints the URL, then returns
 ```
 
-### If `preview-artifact` isn't on your agent's PATH
+### If `pretifact` isn't on your agent's PATH
 
 `npm install -g` puts the binary in npm's global bin. If your agent runs with a
 minimal PATH and can't find it, add npm's global bin to PATH:
@@ -168,7 +168,7 @@ export PATH="$(npm prefix -g)/bin:$PATH"
 …or run it straight from the cloned repo without linking at all:
 
 ```bash
-node bin/preview-artifact.js open file.md   # from the preview-artifact/ dir
+node bin/pretifact.js open file.md   # from the preview-artifact/ dir
 ```
 
 ## How it works
@@ -176,10 +176,10 @@ node bin/preview-artifact.js open file.md   # from the preview-artifact/ dir
 One shared **daemon** serves every file; the file is passed as a `?path=` query
 parameter rather than getting its own server/port. The CLI auto-starts the
 daemon (detached) on first use, reuses it afterward, and records its port in
-`~/.preview-artifact/daemon.json`.
+`~/.pretifact/daemon.json`.
 
 ```
-bin/preview-artifact.js  CLI — ensures the daemon is up, opens /?path=<file>
+bin/pretifact.js  CLI — ensures the daemon is up, opens /?path=<file>
 server/index.mjs         daemon: serves the SPA, GET/PUT /api/file?path=,
                          GET /api/raw?path= (pdf bytes), /ws?path= live-reload
 src/                     Vite + React SPA
@@ -187,7 +187,8 @@ src/                     Vite + React SPA
   readview.ts              markdown-it + highlight.js + mermaid + KaTeX (read mode)
   Editor.tsx               Milkdown Crepe wrapper (markdown edit mode)
   frontmatter.ts           split/join YAML frontmatter so it never round-trips
-.claude/commands/        Claude Code /preview-artifact slash command
+skills/preview-artifact/ the skill (shipped by the Claude Code plugin)
+.claude-plugin/          Claude Code plugin marketplace
 AGENTS.md                instructions for coding agents
 ```
 

@@ -1,5 +1,5 @@
 {
-  "name": "preview-artifact",
+  "name": "pretifact",
   "version": "0.1.1",
   "description": "Open AI-agent markdown / LaTeX / PDF artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
@@ -22,7 +22,7 @@
     "cli"
   ],
   "bin": {
-    "preview-artifact": "bin/preview-artifact.js"
+    "pretifact": "bin/pretifact.js"
   },
   "files": [
     "bin",

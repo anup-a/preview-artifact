@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// CLI for preview-artifact.
+// CLI for pretifact.
 //
-//   preview-artifact open <file>   open a file in the shared local daemon
-//   preview-artifact <file>        shorthand for "open"
-//   preview-artifact stop          stop the daemon
+//   pretifact open <file>   open a file in the shared local daemon
+//   pretifact <file>        shorthand for "open"
+//   pretifact stop          stop the daemon
 //
 // A single daemon serves every file (passed as ?path=), auto-started on first
-// use and reused afterwards. State lives in ~/.preview-artifact/daemon.json.
+// use and reused afterwards. State lives in ~/.pretifact/daemon.json.
 import path from "node:path";
 import os from "node:os";
 import { existsSync, readFileSync, mkdirSync, openSync } from "node:fs";
@@ -14,18 +14,18 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import open from "open";
 
-const STATE_DIR = path.join(os.homedir(), ".preview-artifact");
+const STATE_DIR = path.join(os.homedir(), ".pretifact");
 const STATE_FILE = path.join(STATE_DIR, "daemon.json");
 const LOG_FILE = path.join(STATE_DIR, "daemon.log");
 const serverEntry = fileURLToPath(new URL("../server/index.mjs", import.meta.url));
 
 function usage(code = 0) {
-  console.log(`preview-artifact — read & edit agent artifacts in the browser
+  console.log(`pretifact — read & edit agent artifacts in the browser
 
 Usage:
-  preview-artifact open <file...> Open .md / .tex / .pdf file in the browser
-  preview-artifact <file>        Shorthand for "open"
-  preview-artifact stop          Stop the background daemon
+  pretifact open <file...>  Open .md / .tex / .pdf / image files in the browser
+  pretifact <file>          Shorthand for "open"
+  pretifact stop            Stop the background daemon
 
 Options:
   --no-open                      Print the URL but don't launch a browser
@@ -53,7 +53,7 @@ async function healthyPort() {
     });
     if (!res.ok) return null;
     const body = await res.json();
-    return body?.app === "preview-artifact" ? state.port : null;
+    return body?.app === "pretifact" ? state.port : null;
   } catch {
     return null;
   }
@@ -80,14 +80,14 @@ async function startDaemon() {
 async function stopDaemon() {
   const state = readState();
   if (!state?.pid) {
-    console.log("preview-artifact: no daemon running");
+    console.log("pretifact: no daemon running");
     return;
   }
   try {
     process.kill(state.pid, "SIGTERM");
-    console.log(`preview-artifact: stopped daemon (pid ${state.pid})`);
+    console.log(`pretifact: stopped daemon (pid ${state.pid})`);
   } catch {
-    console.log("preview-artifact: daemon not running");
+    console.log("pretifact: daemon not running");
   }
 }
 
@@ -112,7 +112,7 @@ async function openFiles(files, noOpen) {
 
   for (const t of targets) {
     console.log(
-      `[preview-artifact] ${path.basename(t)} → http://127.0.0.1:${port}/?path=${encodeURIComponent(t)}`,
+      `[pretifact] ${path.basename(t)} → http://127.0.0.1:${port}/?path=${encodeURIComponent(t)}`,
     );
   }
   // Open a browser tab at the first artifact (the rest show in the panel).
