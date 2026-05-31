@@ -9,7 +9,7 @@
 // github-markdown.css already switches on prefers-color-scheme internally, so it
 // needs nothing here.
 
-import hljsDark from "highlight.js/styles/github-dark.css?inline";
+import hljsDark from "highlight.js/styles/atom-one-dark.css?inline";
 import crepeDark from "@milkdown/crepe/theme/frame-dark.css?inline";
 
 function injectDark(css: string): void {

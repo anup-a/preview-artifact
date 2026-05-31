@@ -3,23 +3,25 @@
    hsl(var(--token)) so opacity modifiers work via hsl(var(--token) / .9). */
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  /* Atom One Light */
+  --background: 0 0% 98%;       /* #fafafa */
+  --foreground: 228 8% 24%;     /* #383a42 */
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --primary: 240 5.9% 10%;
+  --card-foreground: 228 8% 24%;
+  --muted: 240 6% 94%;          /* #ededee */
+  --muted-foreground: 229 4% 60%; /* #969799 */
+  --border: 240 5% 88%;         /* #dfdfe1 */
+  --input: 240 5% 88%;
+  --primary: 228 8% 20%;
   --primary-foreground: 0 0% 98%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --ring: 240 5% 64.9%;
+  --accent: 240 6% 94%;
+  --accent-foreground: 228 8% 20%;
+  --ring: 221 87% 60%;          /* #4078f2 atom blue */
 
-  --warning: 38 92% 50%;
-  --success: 142 71% 45%;
-  --heading: 32 90% 34%; /* amber — darker for contrast on light bg */
+  --warning: 38 92% 45%;
+  --success: 142 64% 38%;
+  --link: 221 87% 53%;          /* #4078f2 */
+  --heading: 5 73% 52%;         /* #e45649 atom one light red */
 
   --radius: 0.65rem;
   --toolbar-h: 56px;
@@ -31,23 +33,24 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  /* GitHub dark palette (canvas / fg / border values mapped to HSL). */
+  /* Atom One Dark */
   :root {
-    --background: 216 28% 7%;     /* #0d1117 canvas-default */
-    --foreground: 210 14% 78%;    /* #c9d1d9 — softer than pure white */
-    --card: 215 21% 11%;          /* #161b22 elevated reading surface */
-    --card-foreground: 210 14% 78%;
-    --muted: 213 15% 15%;         /* #21262d */
-    --muted-foreground: 212 9% 58%; /* #8b949e */
-    --border: 212 12% 21%;        /* #30363d */
-    --input: 212 12% 21%;
-    --primary: 210 14% 85%;       /* bright surface for the Save button */
-    --primary-foreground: 216 28% 7%;
-    --accent: 213 15% 19%;
-    --accent-foreground: 210 14% 85%;
-    --ring: 212 12% 42%;
+    --background: 220 13% 18%;    /* #282c34 canvas */
+    --foreground: 219 14% 71%;    /* #abb2bf soft text */
+    --card: 216 13% 15%;          /* #21252b — editor/panel surfaces */
+    --card-foreground: 219 14% 71%;
+    --muted: 219 14% 20%;         /* #2c313a — code blocks, tab track */
+    --muted-foreground: 220 10% 55%; /* #828997 */
+    --border: 225 13% 26%;        /* #3a3f4b */
+    --input: 225 13% 26%;
+    --primary: 219 14% 78%;       /* surface for the Save button */
+    --primary-foreground: 220 13% 18%;
+    --accent: 219 14% 24%;
+    --accent-foreground: 219 14% 85%;
+    --ring: 207 82% 66%;          /* #61afef atom blue */
 
-    --heading: 43 74% 61%;        /* #e3b341 amber/gold */
+    --link: 207 82% 66%;          /* #61afef */
+    --heading: 355 65% 65%;       /* #e06c75 atom one dark coral */
 
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
     --shadow:
@@ -253,26 +256,59 @@ body {
   padding: 28px 20px 120px;
 }
 
+/* No card: content reads directly on the page background. */
 .read-view.markdown-body {
   max-width: var(--content-max);
   width: 100%;
-  padding: 44px 52px;
-  background: hsl(var(--card));
+  padding: 8px 24px 0;
+  background: transparent;
   color: hsl(var(--foreground));
-  border: 1px solid hsl(var(--border));
-  border-radius: calc(var(--radius) + 4px);
-  box-shadow: var(--shadow);
   font-size: 15.5px;
   line-height: 1.7;
 }
 
-/* Amber headings; never render as blue links (e.g. anchor permalinks). */
+/* Headings in the accent color; never render as links (anchor permalinks). */
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) {
   color: hsl(var(--heading));
 }
 .read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) a {
   color: inherit;
   text-decoration: none;
+}
+/* heading underline rules (h1/h2) tuned to our border token */
+.read-view.markdown-body :is(h1, h2) {
+  border-bottom-color: hsl(var(--border));
+}
+
+.read-view.markdown-body a {
+  color: hsl(var(--link));
+}
+
+/* Code blocks + inline code use the muted surface so they stand out without a
+   card. The highlight.js theme provides token colors; we own the background. */
+.read-view.markdown-body pre {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+.read-view.markdown-body :not(pre) > code {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.read-view.markdown-body blockquote {
+  color: hsl(var(--muted-foreground));
+  border-left-color: hsl(var(--border));
+}
+
+.read-view.markdown-body :is(table tr, table td, table th) {
+  border-color: hsl(var(--border));
+}
+.read-view.markdown-body table tr {
+  background: transparent;
+}
+.read-view.markdown-body hr {
+  background: hsl(var(--border));
 }
 
 .edit-view {
