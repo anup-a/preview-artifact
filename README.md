@@ -4,7 +4,10 @@ Open the artifacts your coding agents produce (plans, design docs, audit
 reports, papers) in the browser — **read them beautifully, edit them in place,
 save back to disk, and live-reload** when an agent rewrites the file.
 
-Handles **Markdown** (`.md`), **LaTeX** (`.tex`), and **PDF** (`.pdf`).
+![preview-artifact — light and dark](docs/screenshots/hero-split.png)
+
+Handles **Markdown** (`.md`), **LaTeX** (`.tex`), and **PDF** (`.pdf`), with a
+light and dark theme.
 
 Fully local. No cloud, no telemetry, no account.
 
