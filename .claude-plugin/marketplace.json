@@ -1,0 +1,16 @@
+{
+  "name": "preview-artifact",
+  "owner": { "name": "anup-a", "url": "https://github.com/anup-a" },
+  "metadata": {
+    "description": "Local browser viewer for agent artifacts (markdown / LaTeX / PDF).",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "preview-artifact",
+      "source": "./plugins/claude",
+      "description": "Adds the /preview-artifact command to open .md/.tex/.pdf files in the local browser viewer.",
+      "version": "0.1.0"
+    }
+  ]
+}

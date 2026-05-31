@@ -80,37 +80,54 @@ Use it from any project — it's not tied to any particular repo.
 ## Use it from your coding agent
 
 This tool is meant to be launched *by* your agent when it finishes writing an
-artifact. The CLI runs a long-lived local server, so agents must launch it
-**in the background**. See [`AGENTS.md`](./AGENTS.md) for the canonical agent
+artifact. The CLI self-daemonizes and returns immediately, so agents just run it
+— no backgrounding needed. See [`AGENTS.md`](./AGENTS.md) for the canonical
 instructions; quick reference below.
 
-### Claude Code
+### Claude Code (plugin)
 
-A `/preview-artifact` slash command ships in [`.claude/commands/`](./.claude/commands/).
+Install the plugin from this repo's marketplace, which adds the
+`/preview-artifact` command in every project:
 
-- **Per-project:** it's auto-available when Claude Code is run inside this repo.
-- **Global (any project):** copy it once —
-  ```bash
-  mkdir -p ~/.claude/commands
-  cp .claude/commands/preview-artifact.md ~/.claude/commands/
-  ```
-  Then in any session: `/preview-artifact path/to/file.md`
+```
+/plugin marketplace add anup-a/preview-artifact
+/plugin install preview-artifact@preview-artifact
+```
 
-### Codex / Cursor / Aider / shell-based agents
+Then: `/preview-artifact path/to/file.md`. (When working inside this repo the
+command is also auto-available from [`.claude/commands/`](./.claude/commands/).)
 
-These read `AGENTS.md` automatically. They can launch it directly — no
-backgrounding needed, the CLI self-daemonizes and returns immediately:
+### Codex (custom prompt)
+
+Adds a `/preview-artifact` slash command to Codex. See
+[`plugins/codex/`](./plugins/codex/):
+
+```bash
+mkdir -p ~/.codex/prompts
+cp plugins/codex/prompts/preview-artifact.md ~/.codex/prompts/
+```
+
+### Cursor / Aider / other shell agents
+
+They read `AGENTS.md` automatically and can launch it directly:
 
 ```bash
 preview-artifact open path/to/file.md   # prints the URL, then returns
 ```
 
-### Any agent without PATH access to the global bin
+### If `preview-artifact` isn't on your agent's PATH
 
-Invoke the entry script by absolute path:
+`npm link` installs the binary into npm's global bin. If your agent runs with a
+minimal PATH and can't find it, add npm's global bin to PATH:
 
 ```bash
-node /absolute/path/to/preview-artifact/bin/preview-artifact.js open file.md
+export PATH="$(npm prefix -g)/bin:$PATH"
+```
+
+…or run it straight from the cloned repo without linking at all:
+
+```bash
+node bin/preview-artifact.js open file.md   # from the preview-artifact/ dir
 ```
 
 ## How it works

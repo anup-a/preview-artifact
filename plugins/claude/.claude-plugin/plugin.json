@@ -1,0 +1,10 @@
+{
+  "name": "preview-artifact",
+  "description": "Open markdown / LaTeX / PDF artifacts in a local browser viewer — read beautifully, edit in place, save back, live-reload.",
+  "version": "0.1.0",
+  "author": { "name": "Anup Aglawe", "url": "https://github.com/anup-a" },
+  "homepage": "https://github.com/anup-a/preview-artifact",
+  "repository": "https://github.com/anup-a/preview-artifact",
+  "license": "MIT",
+  "keywords": ["markdown", "latex", "pdf", "viewer", "artifacts", "preview"]
+}
