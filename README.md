@@ -1,10 +1,11 @@
-# preview-artifact
+# Pretifact
 
-Open the artifacts your coding agents produce (plans, design docs, audit
-reports, papers) in the browser — **read them beautifully, edit them in place,
-save back to disk, and live-reload** when an agent rewrites the file.
+**Pretifact** (the `preview-artifact` npm package) opens the artifacts your coding
+agents produce (plans, design docs, audit reports, papers) in the browser —
+**read them beautifully, edit them in place, save back to disk, and live-reload**
+when an agent rewrites the file.
 
-![preview-artifact — light and dark](docs/screenshots/hero-split.png)
+![Pretifact — light and dark](docs/screenshots/hero-split.png)
 
 Handles **Markdown** (`.md`), **LaTeX** (`.tex`), and **PDF** (`.pdf`), with a
 light and dark theme.
