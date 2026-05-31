@@ -243,6 +243,9 @@ body {
   overflow: auto;
   display: flex;
   justify-content: center;
+  /* flex-start so the content card sizes to its own height instead of being
+     stretched to the viewport (which would clip the card border mid-document). */
+  align-items: flex-start;
   padding: 28px 20px 120px;
 }
 
@@ -255,6 +258,12 @@ body {
   box-shadow: var(--shadow);
   font-size: 15.5px;
   line-height: 1.7;
+}
+
+/* Headings should never render as blue links (e.g. anchor permalinks). */
+.read-view.markdown-body :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .edit-view {

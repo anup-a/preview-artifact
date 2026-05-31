@@ -44,7 +44,9 @@ const md = new MarkdownIt({
     return `<pre class="hljs"><code>${escapeHtml(code)}</code></pre>`;
   },
 })
-  .use(anchor, { permalink: anchor.permalink.headerLink({ safariReaderFix: true }) })
+  // Adds slug `id`s to headings for deep-linking, but does NOT wrap headings in
+  // an <a> — that would inherit github-markdown's blue link color.
+  .use(anchor)
   .use(taskLists, { enabled: true, label: true });
 
 export function renderMarkdown(body: string): string {
