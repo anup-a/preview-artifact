@@ -4,7 +4,7 @@
   "description": "Open AI-agent markdown artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
   "bin": {
-    "artifact": "bin/artifact.js"
+    "preview-artifact": "bin/preview-artifact.js"
   },
   "files": [
     "bin",

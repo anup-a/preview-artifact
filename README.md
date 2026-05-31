@@ -7,7 +7,7 @@ save back to disk, and live-reload** when an agent rewrites the file.
 Fully local. No cloud, no telemetry, no account.
 
 ```
-artifact open docs/plans/2026-05-31-some-design.md
+preview-artifact open docs/plans/2026-05-31-some-design.md
 ```
 
 ## Why
@@ -35,16 +35,16 @@ git clone <this-repo> artifact-viewer
 cd artifact-viewer
 npm install
 npm run build      # produces dist/ that the CLI serves
-npm link           # makes `artifact` available globally
+npm link           # makes `preview-artifact` available globally
 ```
 
 ## Usage
 
 ```bash
-artifact open path/to/file.md   # open in the browser
-artifact path/to/file.md        # shorthand
-artifact open file.md --no-open # start server without launching a browser
-artifact --help
+preview-artifact open path/to/file.md   # open in the browser
+preview-artifact path/to/file.md        # shorthand
+preview-artifact open file.md --no-open # start server without launching a browser
+preview-artifact --help
 ```
 
 Use it from any project — it's not tied to any particular repo.
@@ -52,7 +52,7 @@ Use it from any project — it's not tied to any particular repo.
 ## How it works
 
 ```
-bin/artifact.js      CLI — resolves the file, starts the server
+bin/preview-artifact.js  CLI — resolves the file, starts the server
 server/index.mjs     Fastify: serves the SPA, GET/PUT /api/file, /ws live-reload
 src/                 Vite + React SPA
   App.tsx              orchestration: load, read/edit toggle, save, reload

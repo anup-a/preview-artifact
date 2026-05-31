@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // CLI for artifact-viewer.
 //
-//   artifact open <file.md>   open a markdown artifact in the browser
-//   artifact <file.md>        shorthand for `open`
+//   preview-artifact open <file.md>   open a markdown artifact in the browser
+//   preview-artifact <file.md>        shorthand for `open`
 //
 import path from "node:path";
 import { existsSync } from "node:fs";
@@ -14,8 +14,8 @@ function usage(code = 0) {
   console.log(`artifact-viewer — read & edit agent markdown artifacts in the browser
 
 Usage:
-  artifact open <file.md>   Open a markdown file (beautiful read view + WYSIWYG edit)
-  artifact <file.md>        Shorthand for "open"
+  preview-artifact open <file.md>   Open a markdown file (beautiful read view + WYSIWYG edit)
+  preview-artifact <file.md>        Shorthand for "open"
 
 Options:
   --no-open                 Start the server but don't launch a browser
