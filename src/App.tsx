@@ -163,6 +163,14 @@ export function App() {
           <span className="file-path" title={path}>{path}</span>
         </div>
         <div className="toolbar-actions">
+          {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
+          {binary ? (
+            <span className="status clean">
+              {kind === "pdf" ? "PDF" : "Image"} · read-only
+            </span>
+          ) : (
+            <StatusPill dirty={dirty} saveState={saveState} />
+          )}
           <button
             className="icon-btn"
             onClick={toggleTheme}
@@ -180,14 +188,6 @@ export function App() {
               </svg>
             )}
           </button>
-          {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
-          {binary ? (
-            <span className="status clean">
-              {kind === "pdf" ? "PDF" : "Image"} · read-only
-            </span>
-          ) : (
-            <StatusPill dirty={dirty} saveState={saveState} />
-          )}
           {editable && (
             <div className="mode-switch" role="tablist">
               <button
