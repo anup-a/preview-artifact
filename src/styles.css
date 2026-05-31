@@ -63,7 +63,7 @@ body {
 
 /* The frame thickness — orange body shows in this padding. */
 #root {
-  padding: 14px;
+  padding: 6px;
 }
 
 :focus-visible {
@@ -75,7 +75,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 6px;
   overflow: hidden;
   /* warm near-white paper, very subtle warm tint toward the edges */
   background-color: hsl(42 24% 96%);
@@ -417,10 +417,43 @@ body {
   padding: 24px;
 }
 
-/* ---- Scrollbar ---- */
+/* ---- Scrollbars ---- */
 .content::-webkit-scrollbar { width: 12px; height: 12px; }
 .content::-webkit-scrollbar-thumb {
   background: hsl(var(--border));
   border: 3px solid hsl(var(--background));
   border-radius: 999px;
+}
+
+/* Sleek thin scrollbars for inner scrollers (code blocks, equations, source). */
+.read-view.markdown-body pre,
+.read-view .tex-math,
+.source-input {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
+}
+.read-view.markdown-body pre::-webkit-scrollbar,
+.read-view .tex-math::-webkit-scrollbar,
+.source-input::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.read-view.markdown-body pre::-webkit-scrollbar-track,
+.read-view .tex-math::-webkit-scrollbar-track,
+.source-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+.read-view.markdown-body pre::-webkit-scrollbar-thumb,
+.read-view .tex-math::-webkit-scrollbar-thumb,
+.source-input::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+.read-view.markdown-body pre:hover::-webkit-scrollbar-thumb,
+.read-view .tex-math:hover::-webkit-scrollbar-thumb,
+.source-input::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+  background-clip: padding-box;
 }

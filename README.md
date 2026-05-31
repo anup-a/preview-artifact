@@ -12,6 +12,26 @@ Fully local. No cloud, no telemetry, no account.
 preview-artifact open docs/plans/2026-05-31-some-design.md
 ```
 
+## Screenshots
+
+Editorial read view — serif display type, warm paper, orange frame:
+
+![Read view](docs/screenshots/read-markdown.png)
+
+Rich markdown — images, headings, and a live mermaid diagram, GFM tables, task
+lists and KaTeX math:
+
+![Markdown with image](docs/screenshots/showcase.png)
+![Mermaid, checklist, table](docs/screenshots/showcase-diagram.png)
+
+LaTeX (`.tex`) — equations typeset by KaTeX over highlighted source:
+
+![LaTeX](docs/screenshots/latex.png)
+
+WYSIWYG edit mode (Milkdown) with the YAML frontmatter split into its own panel:
+
+![Edit mode](docs/screenshots/edit-markdown.png)
+
 ## Why
 
 Terminal markdown is hard to read and IDE preview is read-only & bland. AI
