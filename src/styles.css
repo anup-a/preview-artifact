@@ -202,15 +202,18 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   border: 1px solid hsl(var(--border));
   background: hsl(var(--card));
   color: hsl(var(--muted-foreground));
   border-radius: calc(var(--radius) - 2px);
-  font-size: 15px;
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.icon-btn svg {
+  display: block;
 }
 .icon-btn:hover {
   color: hsl(var(--foreground));
