@@ -11,6 +11,7 @@ import {
   fileDir,
   type FileKind,
 } from "./api";
+import { getTheme, applyTheme, type Theme } from "./theme";
 
 // Rewrite local/relative <img> sources so they load through the daemon
 // (remote http(s)/data/blob URLs are left untouched).
@@ -39,6 +40,15 @@ export function App() {
   const [editKey, setEditKey] = useState(0);
   // Cache-buster for the PDF <iframe> so external changes reload it.
   const [rawVersion, setRawVersion] = useState(0);
+  const [theme, setTheme] = useState<Theme>(getTheme);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((cur) => {
+      const next: Theme = cur === "light" ? "dark" : "light";
+      applyTheme(next);
+      return next;
+    });
+  }, []);
 
   const readRef = useRef<HTMLDivElement>(null);
   const dirtyRef = useRef(dirty);
@@ -153,6 +163,14 @@ export function App() {
           <span className="file-path" title={path}>{path}</span>
         </div>
         <div className="toolbar-actions">
+          <button
+            className="icon-btn"
+            onClick={toggleTheme}
+            title={theme === "light" ? "Switch to dark" : "Switch to light"}
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? "☾" : "☀"}
+          </button>
           {mode === "edit" && editable && <span className="edit-pill">Editing</span>}
           {binary ? (
             <span className="status clean">

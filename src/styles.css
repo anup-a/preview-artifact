@@ -36,6 +36,27 @@
   --shadow: 0 1px 3px 0 hsl(35 14% 13% / 0.07), 0 1px 2px -1px hsl(35 14% 13% / 0.07);
 }
 
+/* Dark mode — warm editorial dark paper, same orange accent. */
+:root[data-theme="dark"] {
+  --background: 30 12% 10%;
+  --foreground: 40 30% 86%;
+  --card: 30 12% 13%;
+  --card-foreground: 40 30% 86%;
+  --muted: 32 10% 18%;
+  --muted-foreground: 38 9% 60%;
+  --border: 34 9% 25%;
+  --input: 34 9% 25%;
+  --primary: 40 30% 86%;
+  --primary-foreground: 30 12% 10%;
+  --accent: 22 88% 58%;
+  --accent-foreground: 30 12% 10%;
+  --ring: 22 88% 58%;
+  --link: 24 90% 63%;
+  --heading: 40 33% 92%;
+  --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
+  --shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.5), 0 1px 2px -1px hsl(0 0% 0% / 0.5);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -64,6 +85,24 @@ body {
 /* The frame thickness — orange body shows in this padding. */
 #root {
   padding: 6px;
+}
+
+/* Dark mode: deeper orange frame + warm dark paper. */
+[data-theme="dark"] body {
+  background: linear-gradient(
+    145deg,
+    hsl(20 72% 40%) 0%,
+    hsl(25 50% 27%) 50%,
+    hsl(28 28% 16%) 100%
+  );
+}
+[data-theme="dark"] .app {
+  background-color: hsl(30 12% 11%);
+  background-image: radial-gradient(
+    115% 80% at 50% -8%,
+    hsl(32 13% 15%) 0%,
+    hsl(30 12% 10%) 100%
+  );
 }
 
 :focus-visible {
@@ -158,6 +197,26 @@ body {
 .status.error { color: hsl(0 60% 45%); border-color: hsl(0 60% 45% / 0.3); background: hsl(0 60% 45% / 0.08); }
 
 /* ---- Segmented tab switch ---- */
+/* Theme toggle icon button */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--muted-foreground));
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.icon-btn:hover {
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--ring));
+}
+
 /* "Editing" pill — shown only in edit mode */
 .edit-pill {
   display: inline-flex;

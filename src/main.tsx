@@ -11,6 +11,7 @@ import "@fontsource/source-serif-4/600.css";
 import "highlight.js/styles/atom-one-light.css";
 import "github-markdown-css/github-markdown-light.css";
 import "katex/dist/katex.min.css";
+import "./theme"; // sets data-theme + injects dark code highlighting
 import "./styles.css";
 
 const root = document.getElementById("root");
