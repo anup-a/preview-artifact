@@ -1,6 +1,6 @@
 {
   "name": "pretifact",
-  "version": "0.1.1",
+  "version": "1.2.0",
   "description": "Open AI-agent markdown / LaTeX / PDF artifacts in the browser — read beautifully, edit in place, save back, live-reload.",
   "type": "module",
   "homepage": "https://github.com/anup-a/preview-artifact",
