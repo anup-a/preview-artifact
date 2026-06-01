@@ -60,14 +60,39 @@ export function renderMarkdown(body: string): string {
   return md.render(body);
 }
 
-/** Render any mermaid code fences found inside the container into SVG. */
+// Tolerant pre-pass so agent-authored diagrams render like they do elsewhere
+// (e.g. Lark): literal "\n" line-breaks → <br/>, and backticks inside node
+// labels (incl. ```fences```) stripped — mermaid 11 rejects both.
+function repairMermaid(code: string): string {
+  return code
+    .replace(/`+/g, "") // drop backticks (``` openui ```, `code`) inside labels
+    .replace(/\\n/g, "<br/>") // legacy \n line-break → mermaid-friendly <br/>
+    // Quote unquoted edge labels so @, →, parens, etc. are literal text — mermaid
+    // 11 otherwise reads a bare @ as edge-id syntax and throws.
+    .replace(/\|([^|"\n]+)\|/g, (_m, label) => `|"${label.trim()}"|`);
+}
+
+let mermaidSeq = 0;
+
+/** Render mermaid code fences to SVG; on failure, fall back to a code block. */
 export async function runMermaid(container: HTMLElement): Promise<void> {
   const nodes = Array.from(container.querySelectorAll<HTMLElement>("pre.mermaid"));
-  if (nodes.length === 0) return;
-  try {
-    await mermaid.run({ nodes });
-  } catch (err) {
-    console.error("[artifact-viewer] mermaid render error:", err);
+  for (const node of nodes) {
+    const raw = node.textContent ?? "";
+    try {
+      const { svg } = await mermaid.render(`pa-mermaid-${mermaidSeq++}`, repairMermaid(raw));
+      node.innerHTML = svg;
+    } catch (err) {
+      // A single bad diagram shouldn't look like the page is broken — show the
+      // source instead of mermaid's error box.
+      console.error("[pretifact] mermaid render error:", err);
+      const pre = document.createElement("pre");
+      pre.className = "hljs language-mermaid";
+      const code = document.createElement("code");
+      code.textContent = raw;
+      pre.appendChild(code);
+      node.replaceWith(pre);
+    }
   }
 }
 
