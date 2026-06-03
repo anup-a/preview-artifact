@@ -12,6 +12,9 @@ export type ZoomContent =
 
 const MIN_SCALE = 0.2;
 const MAX_SCALE = 8;
+// Lower = gentler zoom. ~100px wheel tick → ×1.08; a trackpad's small deltas
+// accumulate smoothly instead of jumping.
+const ZOOM_SENSITIVITY = 0.0008;
 const CLICK_SLOP = 5; // px of movement under which a pointer up counts as a click
 
 export function Lightbox({
@@ -59,7 +62,10 @@ export function Lightbox({
       const cx = e.clientX - rect.left - rect.width / 2;
       const cy = e.clientY - rect.top - rect.height / 2;
       const s = view.current.scale;
-      const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+      // Scale proportionally to scroll distance so trackpads (many tiny events)
+      // and mouse wheels (few large ticks) feel the same. deltaMode 1 = lines.
+      const px = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      const factor = Math.exp(-px * ZOOM_SENSITIVITY);
       const ns = Math.min(MAX_SCALE, Math.max(MIN_SCALE, s * factor));
       const ratio = ns / s;
       // Keep the point under the cursor fixed while scaling about the center.
