@@ -22,11 +22,13 @@
   --link: 21 74% 44%;           /* orange */
   --heading: 35 16% 11%;        /* headings are near-black serif */
 
-  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-serif: "Source Serif 4", Georgia, "Iowan Old Style", "Palatino Linotype",
-    serif;
+  --font-display: "Playfair Display", "Noto Serif SC", Georgia,
+    "Times New Roman", "Songti SC", serif;
+  --font-serif: "Source Serif 4", "Noto Serif SC", Georgia, "Iowan Old Style",
+    "Palatino Linotype", "Songti SC", "PingFang SC", serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+    Arial, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    sans-serif;
 
   --radius: 0.6rem;
   --toolbar-h: 58px;
@@ -514,6 +516,91 @@ body {
   text-align: center;
   margin: 24px 0;
   padding: 0;
+}
+
+/* Click-to-zoom affordance for charts/diagrams in the reading surface. */
+.read-view.markdown-body img,
+.read-view pre.mermaid svg,
+.image-view {
+  cursor: zoom-in;
+}
+
+/* ---- Zoom lightbox (images + diagrams) ---- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: hsl(30 12% 7% / 0.86);
+  backdrop-filter: blur(3px);
+  cursor: grab;
+  touch-action: none;
+}
+.lightbox:active {
+  cursor: grabbing;
+}
+.lightbox-stage {
+  will-change: transform;
+  transform-origin: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-stage img,
+.lightbox-svg svg {
+  display: block;
+  max-width: 92vw;
+  max-height: 88vh;
+  user-select: none;
+  box-shadow: 0 12px 48px hsl(0 0% 0% / 0.55);
+}
+.lightbox-svg {
+  display: flex;
+}
+.lightbox-svg svg {
+  width: 82vw;
+  height: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+}
+.lightbox-close {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  line-height: 1;
+  color: hsl(40 30% 90%);
+  background: hsl(0 0% 100% / 0.08);
+  border: 1px solid hsl(0 0% 100% / 0.16);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.lightbox-close:hover {
+  background: hsl(0 0% 100% / 0.16);
+}
+.lightbox-hint {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: hsl(40 20% 82% / 0.78);
+  background: hsl(0 0% 0% / 0.32);
+  padding: 6px 14px;
+  border-radius: 999px;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ---- Edit view ---- */

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./Editor";
+import { Lightbox, type ZoomContent } from "./Lightbox";
 import { renderMarkdown, renderTex, runMermaid } from "./readview";
 import { splitFrontmatter, joinFrontmatter } from "./frontmatter";
 import {
@@ -47,6 +48,21 @@ export function App() {
   const [sidebarOpen, setSidebarOpen] = useState(
     () => localStorage.getItem("pa-sidebar") === "1", // closed by default
   );
+  const [zoom, setZoom] = useState<ZoomContent | null>(null);
+
+  // Click-to-zoom: open embedded images and rendered mermaid diagrams in the
+  // full-screen lightbox. Event delegation covers mermaid SVGs that are
+  // inserted asynchronously after the initial render.
+  const onReadClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+    const img = target.closest("img");
+    if (img) {
+      setZoom({ type: "img", src: img.src, alt: img.alt });
+      return;
+    }
+    const svg = target.closest("pre.mermaid svg");
+    if (svg) setZoom({ type: "svg", markup: svg.outerHTML });
+  }, []);
 
   const setSidebar = useCallback((open: boolean) => {
     setSidebarOpen(open);
@@ -247,9 +263,14 @@ export function App() {
           ) : kind === "pdf" ? (
             <iframe className="pdf-view" title={fileName} src={rawUrl(rawVersion)} />
           ) : kind === "image" ? (
-            <img className="image-view" alt={fileName} src={rawUrl(rawVersion)} />
+            <img
+              className="image-view"
+              alt={fileName}
+              src={rawUrl(rawVersion)}
+              onClick={() => setZoom({ type: "img", src: rawUrl(rawVersion), alt: fileName })}
+            />
           ) : mode === "read" ? (
-            <article ref={readRef} className="markdown-body read-view" />
+            <article ref={readRef} className="markdown-body read-view" onClick={onReadClick} />
           ) : kind === "tex" ? (
             <div className="edit-view">
               <textarea
@@ -277,6 +298,7 @@ export function App() {
           )}
         </main>
       </div>
+      {zoom && <Lightbox content={zoom} onClose={() => setZoom(null)} />}
     </div>
   );
 }
