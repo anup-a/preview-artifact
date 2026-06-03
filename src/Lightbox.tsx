@@ -12,9 +12,9 @@ export type ZoomContent =
 
 const MIN_SCALE = 0.2;
 const MAX_SCALE = 8;
-// Lower = gentler zoom. ~100px wheel tick → ×1.08; a trackpad's small deltas
-// accumulate smoothly instead of jumping.
-const ZOOM_SENSITIVITY = 0.0008;
+// Lower = gentler zoom. Proportional to scroll distance so trackpads (many tiny
+// deltas) and mouse wheels (few large ticks) feel consistent.
+const ZOOM_SENSITIVITY = 0.0025;
 const CLICK_SLOP = 5; // px of movement under which a pointer up counts as a click
 
 export function Lightbox({
