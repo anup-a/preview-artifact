@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./Editor";
 import { Lightbox, type ZoomContent } from "./Lightbox";
+import { Toc, type TocItem } from "./Toc";
 import { renderMarkdown, renderTex, runMermaid } from "./readview";
 import { splitFrontmatter, joinFrontmatter } from "./frontmatter";
 import {
@@ -49,6 +50,7 @@ export function App() {
     () => localStorage.getItem("pa-sidebar") === "1", // closed by default
   );
   const [zoom, setZoom] = useState<ZoomContent | null>(null);
+  const [toc, setToc] = useState<TocItem[]>([]);
 
   // Click-to-zoom: open embedded images and rendered mermaid diagrams in the
   // full-screen lightbox. Event delegation covers mermaid SVGs that are
@@ -130,11 +132,27 @@ export function App() {
 
   // Render read-mode HTML when body/kind/mode change (markdown + tex only).
   useEffect(() => {
-    if (mode !== "read" || kind === "pdf" || kind === "image" || !readRef.current) return;
+    if (mode !== "read" || kind === "pdf" || kind === "image" || !readRef.current) {
+      setToc([]);
+      return;
+    }
     readRef.current.innerHTML =
       kind === "tex" ? renderTex(body) : renderMarkdown(body);
     resolveImages(readRef.current);
-    if (kind === "markdown") void runMermaid(readRef.current);
+    if (kind === "markdown") {
+      void runMermaid(readRef.current);
+      // Build the TOC from the headings markdown-it-anchor just gave ids to.
+      const headings = Array.from(
+        readRef.current.querySelectorAll<HTMLElement>("h1, h2, h3, h4"),
+      );
+      setToc(
+        headings
+          .filter((h) => h.id)
+          .map((h) => ({ id: h.id, text: h.textContent ?? "", level: Number(h.tagName[1]) })),
+      );
+    } else {
+      setToc([]);
+    }
   }, [mode, body, kind]);
 
   const save = useCallback(async () => {
@@ -190,6 +208,7 @@ export function App() {
         <Sidebar artifacts={artifacts} currentPath={path} onClose={() => setSidebar(false)} />
       )}
       <div className="main">
+        {mode === "read" && kind === "markdown" && toc.length >= 2 && <Toc items={toc} />}
         <header className="toolbar">
           <div className="file-info">
             {!sidebarOpen && (

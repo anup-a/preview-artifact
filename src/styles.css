@@ -134,6 +134,99 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative; /* positioning context for the hover TOC */
+}
+
+/* ---- Hover table of contents ---- */
+.toc {
+  position: absolute;
+  left: 0;
+  top: var(--toolbar-h);
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 38vw;
+  padding: 12px 10px 12px 14px;
+  pointer-events: none; /* only the list catches the pointer */
+}
+.toc-list {
+  pointer-events: auto;
+  list-style: none;
+  margin: 0;
+  padding: 10px 8px;
+  max-height: 100%;
+  overflow-y: auto;
+  border-radius: var(--radius);
+  /* collapsed: a transparent rail of dashes */
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  scrollbar-width: none;
+}
+.toc-list::-webkit-scrollbar { width: 0; }
+.toc:hover .toc-list {
+  background: hsl(var(--card) / 0.96);
+  border-color: hsl(var(--border));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(4px);
+}
+.toc-item {
+  margin: 1px 0;
+  padding-left: calc(var(--depth, 0) * 12px);
+}
+.toc-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: hsl(var(--muted-foreground));
+  border-radius: 5px;
+  padding: 3px 6px;
+}
+.toc-dash {
+  flex: 0 0 auto;
+  height: 2px;
+  width: 16px;
+  border-radius: 2px;
+  background: hsl(var(--border));
+  transition: background 0.16s ease, width 0.16s ease;
+}
+.toc-item.active .toc-dash {
+  width: 22px;
+  background: hsl(var(--accent));
+}
+.toc-label {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.16s ease, opacity 0.16s ease;
+}
+.toc:hover .toc-dash {
+  display: none;
+}
+.toc:hover .toc-label {
+  max-width: 32vw;
+  opacity: 1;
+}
+.toc:hover .toc-item a:hover {
+  background: hsl(var(--muted) / 0.6);
+  color: hsl(var(--foreground));
+}
+.toc-item.active .toc-label {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+/* Smooth-scroll targets clear the (fixed) toolbar a touch. */
+.read-view :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 18px;
 }
 
 .sidebar {
